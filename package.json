@@ -1,0 +1,25 @@
+{
+  "name": "Justice",
+  "description": "A MVC library to make things easier.",
+  "version": "0.0.1",
+  "keywords": [
+    "MVC",
+    "library"
+  ],
+  "maintainers": [
+    {
+      "name": "Jacob Schatz",
+      "email": "jschatz1@gmail.com",
+      "web": "http://jsz1.github.io/just"
+    }
+  ],
+  "bugs": {
+    "web": "https://github.com/jsz1/just/issues"
+  },
+  "licenses": [
+    {
+      "name": "MIT",
+      "url": "https://raw.githubusercontent.com/jsz1/just/master/LICENSE.txt"
+    }
+  ]
+}
