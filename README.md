@@ -212,3 +212,17 @@ J.l(otherModel.toObject());
 J.l(otherModel.toJSON());
 ```
 We also have a convenience method you'll notice from the last example `J.l` which pipes directly to `console.log`. It's just easier to type. 
+
+### Events
+We have events available and you should create 1 event class/object for app wide event triggering and listening. 
+
+```javascript
+var Events = J.Events();
+
+// Subscribe
+Events.add(document.body,'customEvent',function() {
+	console.log("Event triggered")
+});
+// Trigger
+Events.trigger(document.body,'customEvent');
+```
