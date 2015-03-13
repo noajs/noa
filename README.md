@@ -5,7 +5,7 @@ Just is a fast, small, thoughtfully written javascript MVC Framework. It's has 3
 To be:
   
   - Everything you need.
-  - Solve common problems. 
+  - Solve common problems and pitfalls that large and small apps have.
   - Easy to write.
 
 ## Documentation
