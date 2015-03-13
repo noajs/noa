@@ -265,10 +265,6 @@ In the case of #2 you can use the `View` class and attach a `Mediator` to your v
 
 All that to say you can use your `Mediator` class in two ways. 
 
-#1 Where it acts with the view as the HTML. In that case you'll pass an HTML element to your `Mediator`. 
+1. Where it acts with the view as the HTML. In that case you'll pass an HTML element to your `Mediator`. 
 
-#2 Where you have a view responsible for populating the template. In that case you'll pass a view class to the `Mediator`. 
-
-
-
-
+2. Where you have a view responsible for populating the template. In that case you'll pass a view class to the `Mediator`.
