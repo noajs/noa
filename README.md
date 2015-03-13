@@ -184,7 +184,7 @@ You can then render your view by passing a data object into your `render` method
 view.render({name : "Jimmy"});
 ```
 ### Views
-You can create a view and link it to a main element. When rendering you can render in context of a child of that view or for the whole view. 
+You can create a view and link it to a main element. When rendering you can render in context of a child of that view or for the whole view. There is a couple of typical MVC issues with `Views` that we have solved. See `Mediators` below.
 
 ```javascript
 var view = J.View(document.getElementById("content"),{
@@ -254,3 +254,11 @@ App.Events.add(document.body,'customEvent',function() {
 // Trigger
 App.Events.trigger(document.body,'customEvent');
 ```
+### Mediator
+The Mediator (sometimes called the controller) is listening on behalf of the view and communicates with Models. The view in MVC is supposed to only be dealing with display information. If that's true then we don't do any logic *for* the view on the view. The problem in typical javascript MVC frameworks is that it is hard to tell the difference between the HTML view and the javascript view. Well in **Just**, we have solved that. You'll typically have one of two situations: 
+
+1. You have your HTML written already and you just need to listen for events (buttons to be click, and text to be typed). 
+2. You have an empty HTML element you want to populate with some data from the server. And it may change over time. 
+
+In the case of #1 you can use the `Mediator`. In that case your **View** is your HTML, since it alone is responsible for displaying data. The `Mediator` will listen to changes on your HTML view like it is supposed to do. 
+In the case of #2 you can use the `View` class and attach a `Mediator` to your view. You'll use template files to render your html. In that case your HTML is called templates and the responsibility of making things appear on the screen is left to your `View` class. 
