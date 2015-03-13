@@ -214,7 +214,7 @@ J.l(otherModel.toJSON());
 We also have a convenience method you'll notice from the last example `J.l` which pipes directly to `console.log`. It's just easier to type. 
 
 ### Events
-We have events available and you should create 1 event class/object for app wide event triggering and listening. 
+We have cross browser events available and you would (but won't have to see `App` below) create 1 event class/object for app wide event triggering and listening. 
 
 ```javascript
 var Events = J.Events();
@@ -225,4 +225,18 @@ Events.add(document.body,'customEvent',function() {
 });
 // Trigger
 Events.trigger(document.body,'customEvent');
+```
+
+### App
+You shouldn't need to create the `Event` on your own. It is included with your app object as well as other `App` nessesities. Here is a refactored version of the previous example using the App object for event delegation.
+
+```javascript
+var App = J.App();
+
+// Subscribe
+App.Events.add(document.body,'customEvent',function() {
+	console.log("Event triggered")
+});
+// Trigger
+App.Events.trigger(document.body,'customEvent');
 ```
