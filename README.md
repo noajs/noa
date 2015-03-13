@@ -262,3 +262,13 @@ The Mediator (sometimes called the controller) is listening on behalf of the vie
 
 In the case of #1 you can use the `Mediator`. In that case your **View** is your HTML, since it alone is responsible for displaying data. The `Mediator` will listen to changes on your HTML view like it is supposed to do. 
 In the case of #2 you can use the `View` class and attach a `Mediator` to your view. You'll use template files to render your html. In that case your HTML is called templates and the responsibility of making things appear on the screen is left to your `View` class. 
+
+All that to say you can use your `Mediator` class in two ways. 
+
+#1 Where it acts with the view as the HTML. In that case you'll pass an HTML element to your `Mediator`. 
+
+#2 Where you have a view responsible for populating the template. In that case you'll pass a view class to the `Mediator`. 
+
+
+
+
