@@ -95,6 +95,14 @@ console.log(TinyModel.Plus(1,2));
 Everything in `J` extends from the `Blueprint` object.
 
 ### Getting and Setting properties
+You can initialize `Blueprint` with getters and setters. 
+
+```javascript
+var blueprint = J.Blueprint({
+
+});
+```
+
 The `Blueprint` object/class gives everything that inherits it the ability to `get` and `set` properties. Those properties can then be watched for changes. 
 
 ```javascript
