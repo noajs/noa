@@ -30,7 +30,7 @@ To be:
 ### J.extends`
 
 * Create prototypal inheritance easily: 
- `J.extends(SubClass, Superclass, Class def (optional))`
+ `J.extends(Superclass, Class def (optional))`
  Example:
  
 ```javascript
