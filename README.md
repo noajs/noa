@@ -10,7 +10,7 @@ To be:
 
 ## Documentation
 
-- [J](#)
+- [J](#J)
 - [J.extends`](#)
 - [Prototype](#)
 - ["Static" Methods](#)
