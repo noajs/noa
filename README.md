@@ -123,6 +123,35 @@ sm.set("name","Frank") // sm change key: name sm changed to: frank
 console.log(sm.get("name")); // Frank
 ```
 
+You can create read only properties by creating a property starting with an underscore. This will create the properties sans underscore as a getter only. 
+```javascript
+var Blue = J.extends(J.Blueprint);
+var blue = Blue({
+	name : "John",
+	age : 25,
+	_i : 0
+});
+
+console.log(
+	blue.get("name"),
+	blue.get("age"),
+	blue.get("i"));
+
+	blue.set("name","Jeff");
+	blue.set("age",30);
+	blue.set("i",20);
+	blue.set("_winner",false);
+	blue.set("winner",true);
+// Object {name: "Jeff", age: 30, i: 0, winner: false}
+
+console.log(
+	blue.get("name"),
+	blue.get("age"),
+	blue.get("i"),
+	blue.get("winner"));
+// Jeff 30 0 false
+```
+
 ### The Mapper
 You can use the `Mapper` class to get back a single instance of your model, or a new instance of your model. Make sure to create a single instance of a new `Mapper` with something like this: 
 
