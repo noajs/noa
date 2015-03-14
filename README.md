@@ -10,11 +10,11 @@ To be:
 
 ## Documentation
 
-- [J](#J)
-- [J.extends`](#)
-- [Prototype](#)
-- ["Static" Methods](#)
-- [The Blueprint](#)
+- [J](#j)
+- [J.extends`](#jextends)
+- [Prototype](#prototype)
+- ["Static" Methods](#static-methods)
+- [The Blueprint](#the-blueprint)
 - [Getting and Setting properties](#)
 - [The Mapper](#)
 - [Data Binding](#)
