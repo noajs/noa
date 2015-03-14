@@ -136,6 +136,7 @@ console.log(
 	blue.get("name"),
 	blue.get("age"),
 	blue.get("i"));
+// John 25 0
 
 	blue.set("name","Jeff");
 	blue.set("age",30);
