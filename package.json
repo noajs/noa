@@ -8,6 +8,10 @@
     "browser",
     "library"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jsz1/just.git"
+  },
   "maintainers": [
     {
       "name": "Jacob Schatz",
@@ -16,12 +20,15 @@
     }
   ],
   "bugs": {
-    "web": "https://github.com/jsz1/just/issues"
+    "url": "https://github.com/jsz1/just/issues"
   },
   "licenses": [
     {
       "name": "MIT",
       "url": "https://raw.githubusercontent.com/jsz1/just/master/LICENSE.txt"
     }
-  ]
+  ],
+  "devDependencies": {
+    "qunitjs": "^1.17.1"
+  }
 }

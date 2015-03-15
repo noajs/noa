@@ -9,6 +9,7 @@
 	"quotmark": "double",
 	"undef": true,
 	"unused": true,
+	"globalstrict":true,
 
 	"node": true
 }
