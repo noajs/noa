@@ -269,14 +269,15 @@ We also have a convenience method you'll notice from the last example `J.l` whic
 We have cross browser events available and you would (but won't have to see `App` below) create 1 event class/object for app wide event triggering and listening. 
 
 ```javascript
-var Events = J.Events();
+// New instance of Events class.
+var events = J.Events();
 
 // Subscribe
-Events.add(document.body,'customEvent',function() {
+events.add(document.body,'customEvent',function() {
 	console.log("Event triggered")
 });
 // Trigger
-Events.trigger(document.body,'customEvent');
+events.trigger(document.body,'customEvent');
 ```
 
 ### App
@@ -286,11 +287,11 @@ You shouldn't need to create the `Event` on your own. It is included with your a
 var App = J.App();
 
 // Subscribe
-App.Events.add(document.body,'customEvent',function() {
+App.events.add(document.body,'customEvent',function() {
 	console.log("Event triggered")
 });
 // Trigger
-App.Events.trigger(document.body,'customEvent');
+App.events.trigger(document.body,'customEvent');
 ```
 ### Mediator
 The Mediator (sometimes called the controller) is listening on behalf of the view and communicates with Models. The view in MVC is supposed to only be dealing with display information. If that's true then we don't do any logic *for* the view on the view. The problem in typical javascript MVC frameworks is that it is hard to tell the difference between the HTML view and the javascript view. Well in **Just**, we have solved that. You'll typically have one of two situations: 
