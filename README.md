@@ -56,8 +56,6 @@ tm = TinyModel();
 tm.dance();
 tm.bump();
 ```
-
-### Prototype
 You can add instance methods using the prototype method as you normally would.
 
 ```javascript
