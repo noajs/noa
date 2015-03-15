@@ -12,7 +12,6 @@ To be:
 
 - [J](#j)
 - [J.extends`](#jextends)
-- [Prototype](#prototype)
 - ["Static" Methods](#static-methods)
 - [The Blueprint](#the-blueprint)
 - [Getting and Setting properties](#getting-and-setting-properties)
