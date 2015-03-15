@@ -9,7 +9,12 @@
 	"quotmark": "double",
 	"undef": true,
 	"unused": true,
-	"globalstrict":true,
-
+	"globalstrict":false,
+	"strict": false,
+	"globals" : { 
+		"J" : true, 
+		"define" : true, 
+		"QUnit" : true 
+	},
 	"node": true
 }

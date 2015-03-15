@@ -1,6 +1,5 @@
-"use strict";
+
 ( function( root, factory ) {
-    console.log("ROOT",root)
     if ( typeof define === "function" && define.amd ) {
         // AMD. Register as an anonymous module.
         define( [], factory );
@@ -13,7 +12,7 @@
         // Browser globals ( root is window )
         root.returnExports = factory();
   }
-}( window, function() {
+}( this, function() {
     var J = makeClass();
     J._i = 0;
 
@@ -113,8 +112,9 @@
 
     J.randString = function( n ) {
         var text = "J",
-            possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        for ( var i = 0; i < n; i++ ) {
+            possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
+            i = 0;
+        for ( i = 0; i < n; i++ ) {
             text += possible.charAt( Math.floor( Math.random() * possible.length ) );
         }
         return text;
@@ -130,9 +130,10 @@
     };
 
     J.extends = function( SuperClass, definitionObj ) {
-        var SubClass = makeClass();
+        var SubClass = makeClass(),
+            prop;
         SubClass.prototype = Object.create( SuperClass.prototype );
-        var prop = "";
+        prop = "";
         if ( typeof definitionObj !== "undefined" ) {
             for ( prop in definitionObj ) {
                 // first letter is uppercase
@@ -179,7 +180,7 @@
     J.isEmpty = function( obj ) {
 
         // null and undefined are "empty"
-        if ( obj == null ) {
+        if ( obj === null ) {
             return true;
         }
 
@@ -339,12 +340,16 @@
     };
 
     J.View.prototype.initBindables = function() {
+        var newSelector,
+            newId,
+            bindablesAttributes,
+            i = 0;
         this._bindableMappings = [];
-        var bindablesAttributes = this.el.querySelectorAll( "[data-j-bindable]" );
-        for ( var i = 0; i < bindablesAttributes.length; i++ ) {
-            var newId = J.randString( 5 );
+        bindablesAttributes = this.el.querySelectorAll( "[data-j-bindable]" );
+        for ( i = 0; i < bindablesAttributes.length; i++ ) {
+            newId = J.randString( 5 );
             bindablesAttributes[i].setAttribute( "data-j-bound-id", newId );
-            var newSelector = bindablesAttributes[i].tagName + "[data-j-bound-id='" + newId + "']";
+            newSelector = bindablesAttributes[i].tagName + "[data-j-bound-id='" + newId + "']";
             this._bindableMappings.push( {
                 prop: bindablesAttributes[i].getAttribute( "data-j-bindable" ),
                 element: newSelector
@@ -354,18 +359,23 @@
     };
 
     J.View.prototype.initBindableListeners = function() {
-        for ( var i = 0; i < this._bindableMappings.length; i++ ) {
+        var actionTarget,
+            action,
+            target,
+            i = 0;
+        for ( i = 0; i < this._bindableMappings.length; i++ ) {
             if ( this.bindables.hasOwnProperty( this._bindableMappings[i].prop ) ) {
-                var actionTarget = this.bindables[this._bindableMappings[i].prop],
-                    action = actionTarget.substring( 0, actionTarget.indexOf( " " ) ),
-                    target = actionTarget.substring( actionTarget.indexOf( " " ) + 1 );
-                ( function( that, i ) {
-                    that.el.querySelector( target ).addEventListener( action, function() {
-                        that.el.querySelector( that._bindableMappings[i].element )
-                            .innerText = this.value;
-                    } );
-                } )( this, i );
+                actionTarget = this.bindables[this._bindableMappings[i].prop];
+                action = actionTarget.substring( 0, actionTarget.indexOf( " " ) );
+                target = actionTarget.substring( actionTarget.indexOf( " " ) + 1 );
+                addEventToTarget( this, i );
             }
+        }
+        function addEventToTarget( that, i ) {
+            that.el.querySelector( target ).addEventListener( action, function() {
+                that.el.querySelector( that._bindableMappings[i].element )
+                    .innerText = this.value;
+            } );
         }
     };
 
@@ -378,7 +388,8 @@
     };
 
     J.View.prototype.render = function( data, callback, $to ) {
-        var finished = function() {
+        var renderArguments,
+            finished = function() {
             if ( this.bindables ) {
                 this.initBindables.call( this );
                 this.initBindableListeners.call( this );
@@ -387,7 +398,7 @@
         };
         if ( this.template ) {
             if ( this.template.type === J.types.URL ) {
-                var renderArguments = arguments;
+                renderArguments = arguments;
                 this.template.get( function( html ) {
                     if ( html.status === "OK" ) {
                         if ( renderArguments.length === 3 && typeof $to === "string" ) {
@@ -433,14 +444,20 @@
     };
 
     J.Mediator.prototype.events = function() {
+        var actionTarget,
+            action,
+            target,
+            query,
+            missingEvents = [],
+            s = "";
         if ( typeof this._events !== "undefined" ) {
-            var missingEvents = [];
-            for ( var s in this._events ) {
+            missingEvents = [];
+            for ( s in this._events ) {
                 if ( this._listeners.hasOwnProperty( this._events[s] ) ) {
-                    var actionTarget = s,
-                        action = actionTarget.substring( 0, actionTarget.indexOf( " " ) ),
-                        target = actionTarget.substring( actionTarget.indexOf( " " ) + 1 ),
-                        query = this.view.el.querySelector( target );
+                    actionTarget = s;
+                    action = actionTarget.substring( 0, actionTarget.indexOf( " " ) );
+                    target = actionTarget.substring( actionTarget.indexOf( " " ) + 1 );
+                    query = this.view.el.querySelector( target );
                     if ( query ) {
                         query.addEventListener( action, this._listeners[this._events[s]] );
                     } else {
