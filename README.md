@@ -10,19 +10,19 @@ To be:
 
 ## Documentation
 
-- [J](#)
-- [J.extends`](#)
-- [Prototype](#)
-- ["Static" Methods](#)
-- [The Blueprint](#)
-- [Getting and Setting properties](#)
-- [The Mapper](#)
-- [Data Binding](#)
-- [Templating Engine](#)
-- [Views](#)
-- [Models](#)
-- [Events](#)
-- [App](#)
+- [J](#j)
+- [J.extends`](#jextends)
+- [Prototype](#prototype)
+- ["Static" Methods](#static-methods)
+- [The Blueprint](#the-blueprint)
+- [Getting and Setting properties](#getting-and-setting-properties)
+- [The Mapper](#the-mapper)
+- [Data Binding](#data-binding)
+- [Templating Engine](#templating-engine)
+- [Views](#views)
+- [Models](#models)
+- [Events](#events)
+- [App](#app)
 
 ### J
 * Main `J` Object which contains static methods.
@@ -30,7 +30,7 @@ To be:
 ### J.extends`
 
 * Create prototypal inheritance easily: 
- `J.extends(SubClass, Superclass, Class def (optional))`
+ `J.extends(Superclass, Class def (optional))`
  Example:
  
 ```javascript
@@ -95,6 +95,14 @@ console.log(TinyModel.Plus(1,2));
 Everything in `J` extends from the `Blueprint` object.
 
 ### Getting and Setting properties
+You can initialize `Blueprint` with getters and setters. 
+
+```javascript
+var blueprint = J.Blueprint({
+
+});
+```
+
 The `Blueprint` object/class gives everything that inherits it the ability to `get` and `set` properties. Those properties can then be watched for changes. 
 
 ```javascript
@@ -113,6 +121,36 @@ sm.set("name","John") // sm change key: name sm changed to: John
 console.log(sm.get("name")); // John
 sm.set("name","Frank") // sm change key: name sm changed to: frank
 console.log(sm.get("name")); // Frank
+```
+
+You can create read only properties by creating a property starting with an underscore. This will create the properties sans underscore as a getter only. 
+```javascript
+var Blue = J.extends(J.Blueprint);
+var blue = Blue({
+	name : "John",
+	age : 25,
+	_i : 0
+});
+
+console.log(
+	blue.get("name"),
+	blue.get("age"),
+	blue.get("i"));
+// John 25 0
+
+	blue.set("name","Jeff");
+	blue.set("age",30);
+	blue.set("i",20);
+	blue.set("_winner",false);
+	blue.set("winner",true);
+// Object {name: "Jeff", age: 30, i: 0, winner: false}
+
+console.log(
+	blue.get("name"),
+	blue.get("age"),
+	blue.get("i"),
+	blue.get("winner"));
+// Jeff 30 0 false
 ```
 
 ### The Mapper
