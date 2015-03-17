@@ -26,7 +26,7 @@ Just is a fast, small, thoughtfully written javascript MVC Framework. It's has 3
 
 ### J.extends`
 
-* Create prototypal inheritance easily: 
+* Create inheritance easily: 
  `J.extends(Superclass, Class def (optional))`
  Example:
  
@@ -53,7 +53,7 @@ tm = TinyModel();
 tm.dance();
 tm.bump();
 ```
-You can add instance methods using the prototype method as you normally would.
+You can also add instance methods using the prototype method as you normally would.
 
 ```javascript
 var TinyModel = J.extends(MiniModel);
