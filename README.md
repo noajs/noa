@@ -192,30 +192,51 @@ Using `data-j-bindable` means that anything that is populating a name property w
 You can create dynamic templates in HTML. You can use your own templating engine as well but to use the built in one just create a template file. For example `templates/hello.html`
 
 ```html
-<div>{{name}}</div>
-<p>His name is {{name}}</p>
+<!-- somefile.html -->
+*/list\*
+<ul></ul>
+*\list/*
+
+*/item\*
+<li><a href="{link}">
+	A dog named {name.first} {name.middle.full|capitalize} {name.last|capitalize}
+	<p>{name.quote|titleize}</p>
+	<p>AKA: {name.nickname|camelCase}</p>
+</a></li>
+*\item/*
 ```
-Now you can load this template into your view. 
+You can tell Just where to find your templates. 
 
 ```javascript
-var view = J.View(document.getElementById("content"),{
-	template : J.url("templates/hello.html"),
+J.registerApp( J.App() );
+var app = J.getApp();
+app.config = {
+	root: "http://localhost:3000",
+	templates: "http://localhost:3000/templates"
+};
+```
+With this info in hand Just will make a url request for your templates, but only when you render. You tell Just which template on the page you want to grab. `*/templatename\*` refers to the template name and wrap the end with `*\templatename/*`. You can then grab the template like so
+```javascript
+var container = document.getElementsByClassName("container")[2];
+var View = J.extends(J.View);
+var view = app.addView("list",View({
+	el: container,
+	template: "somefile.html#item", //#item refers to the template name.
+}));
+```
+Notice that our view can grab variables. You can wrap the variable with a single curly brace to add a variable in there.
+
+We also added a filter to our variable using the pipe `|`. There are a few included filters. You can add your own very easily. 
+
+```javascript
+J.addFilter("camelCase",function(str){
+	return str.replace(/^([A-Z])|\s(\w)/g, function(match, p1, p2, offset) {
+	if (p2) return p2.toUpperCase();
+	return p1.toLowerCase();        
+	});
 });
 ```
-You can also load the data by plain HTML injected into the view: 
 
-```javascript
-var view = J.View(document.getElementById("content"),{
-	template : J.html("<div>{{name}}</div><p>His name is {{name}}</p>"),
-});
-```
-Obviously you could use some sort of jQuery or other selectors to get your HTML into this method. 
-
-You can then render your view by passing a data object into your `render` method.
-
-```javascript
-view.render({name : "Jimmy"});
-```
 ### Views
 You can create a view and link it to a main element. When rendering you can render in context of a child of that view or for the whole view. There is a couple of typical MVC issues with `Views` that we have solved. See `Mediators` below.
 
