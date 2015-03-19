@@ -27,6 +27,12 @@
         "TEXT" : "TEXT" 
     };
 
+    J.EventTypes = {
+        "View.TEMPLATE_PARSED" : "View.TEMPLATE_PARSED",
+        "URL.COMPLETE" : "URL.COMPLETE",
+        "Mediator.ADDED" : "Mediator.ADDED"
+    };
+
     J._App = null;
 
     J.registerApp = function( App ) {
@@ -40,6 +46,10 @@
             throw J._makeError( "register", "Register your App with " +
                 "J.registerApp( YourApp )", null );
         }
+    };
+
+    J.isJQueryAvailable = function() {
+        return typeof jQuery !== "undefined";
     };
 
     J._makeError = function( id, msg, err ) {
@@ -136,142 +146,173 @@
         return text;
     };
 
-    J.parse = function( html, obj ) {
-        var specials = {
-            intro: "{{#",
-            introEnd: "}}",
-            outro: "{{/"
+    J.Filter = {
+        titleize: function(str) {
+            return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+        },
+        capitalize: function(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+    };
+
+    J.addFilter = function(name,filter){
+        J.Filter[name] = filter;
+    };
+
+    J.template = function( template, data, typeOfTemplate, callback ) {
+        var templateNameSplit = template.split("#"),
+            appTemplatesPath = J.getApp().config.templates;
+        if ( typeof typeOfTemplate === "undefined" || typeOfTemplate === J.types.URL ) {
+            // if they use trailing slashes then use trailing slashes.
+            if(appTemplatesPath[appTemplatesPath.length-1] !== "/"){
+                appTemplatesPath += "/" + templateNameSplit[0];
+            } else {
+                appTemplatesPath += templateNameSplit[0] + "/";
+            }
+
+            J.url(appTemplatesPath).get(function(response){
+                callback(J.compile(response.data, templateNameSplit[1], data));
+            });
+        } else if( typeOfTemplate === J.types.HTML ) {
+            callback(J.compile(this.template, templateNameSplit[1], data));
+        }
+    };
+
+    J.bindTemplate = function(mediator, el) {
+        var matchers = {
+            mediatorEvents: /on(\S)*\="{mediator\.([\S\s]+?)}"/g,
+            mediatorInBracketsAndQuotes: /\"{([\S\s]+?)}\"/g
         };
+        var results,
+            bracketExec,
+            resultSplit,
+            methodToCall,
+            randIds = [],
+            html = el.innerHTML;
 
-        function findMatchingEndTag(start, helper) {
-            
-            // html.indexOf();
-            var firstTagLocation = start + specials.helperTag.length,
-                firstTagSection = html.substring(start + specials.helperTag.length),
-                endOfFirstTag =  firstTagSection.substring(firstTagSection.indexOf(specials.introEnd) + specials.introEnd.length),
-                closingTagsNeeded = 0,
-                closingTagLocation = discoverIndedentation();
+        results = html.match(matchers.mediatorEvents);
+        if(results){
+            for (var i = 0; i < results.length; i++) {
+                resultSplit = results[i].split("=");
+                html = html.replace(resultSplit[0]+"=","");
+                while(( bracketExec = matchers.mediatorInBracketsAndQuotes.exec(resultSplit[1])) !== null){
+                    methodToCall = bracketExec[1].replace("mediator.","");
+                    var randId = J.randString(9);
+                    html = html.replace(bracketExec[0],"data-just-event=\"" + randId + "\"");
+                    randIds.push({
+                        id: randId,
+                        methodToCall: methodToCall
+                    });
+                }
+            }            
+        }
 
-            function discoverIndedentation(){
-                console.log("discoverIndedentation");
-                var openTagNext = endOfFirstTag.indexOf(specials.helperTag),
-                    closeTagNext = endOfFirstTag.indexOf(specials.endHelperTag);
-                    console.log(closingTagsNeeded);
-                if(openTagNext === -1) {
-                    console.log("open-1");
-                    if(closeTagNext === -1) {
-                        console.log("close-1");
-                        throw J._makeError( "closing_" + helper.tag + "_missing", "Template is missing a matching closing \"" + helper.tag + "\" tag", null );
+        
+        el.innerHTML = html;
+        
+        for (var j = 0; j < randIds.length; j++) {
+            if(J.isJQueryAvailable()){
+                $(el).on("click","[data-just-event='" + randIds[j].id + "']", 
+                    mediator._listeners[randIds[j].methodToCall]);
+            } else {
+                el.querySelector( "[data-just-event='" + randIds[j].id + "']" )
+                    .addEventListener( "click", mediator._listeners[randIds[j].methodToCall]);    
+            }
+        }
+    };
+
+    J.compile = function( componentSource, templateName, obj ) {
+        var matchers = {
+            componentStart: /\*\/([\S\s]+?)\\\*/g,
+            componentEnd: /\*\\([\S\s]+?)\/\*/g,
+            inBetween: new RegExp("\\*\\/" + templateName + "\\\\\\*([\\S\\s]+?)\\*\\\\" + templateName + "\\/\\*", "g"),
+            brackets: /{([\S\s]+?)}/g
+        };
+        var result,
+            toParse = "",
+            prop,
+            propSplit,
+            propAndFilter,
+            filter,
+            skipBracket = false,
+            filterAddon,
+            thisObj;
+
+        while ((result = matchers.componentStart.exec(componentSource)) !== null) {
+            if(result[1] === templateName){
+                var inside;
+                while ((inside = matchers.inBetween.exec(componentSource)) !== null) {
+                    toParse = inside[1];
+                    break;
+                }
+                break;
+            }
+        }
+        var bracketVals = toParse.match(matchers.brackets);
+        if(!bracketVals){
+            return toParse;
+        }
+        for (var i = 0; i < bracketVals.length; i++) {
+            while(prop = matchers.brackets.exec( bracketVals[i] )) {
+                skipBracket = false;
+                prop = prop[1];
+                propAndFilter = null;
+                filter = null;
+                if(prop.indexOf("|") !== -1){
+                    propAndFilter = prop.split("|");
+                    prop = propAndFilter[0];
+                    filter = propAndFilter[1];
+                    if(J.Filter.hasOwnProperty(filter)){
+                        filter = J.Filter[filter];
                     } else {
-                        console.log("closed-else");
-                        if(closingTagsNeeded > 0){
-                            console.log("closed-else>0");
-                            endOfFirstTag = endOfFirstTag.replace(specials.endHelperTag,"");
-                            console.log(endOfFirstTag);
-                            closingTagsNeeded--;
-                            return discoverIndedentation();
+                        filter = null;
+                    }
+                }
+
+                if(prop.indexOf(".") !== -1){
+                    // Let's grab the insides of objects by splitting them by dots.
+                    propSplit = prop.split(".");
+                    thisObj = obj;
+                    for (var j = 0; j < propSplit.length; j++) {
+                        if( thisObj.hasOwnProperty( propSplit[j] ) ){
+                            thisObj = thisObj[propSplit[j]];    
                         } else {
-                            console.log("closed-else=0");
-                            return closeTagNext;    
+                            // Most likely an event listener bracket.
+                            skipBracket = true;
+                            continue;
                         }
                         
                     }
+                    if(skipBracket){
+                        // Most likely an event listener bracket.
+                        continue;
+                    }
+                    if(filter){
+                        thisObj = filter(thisObj);
+                        filterAddon = "\\|" + propAndFilter[1];
+                    } else {
+                        filterAddon = "";
+                    }
+                    toParse = toParse.replace(new RegExp("{" + prop + filterAddon + "}", "g"), thisObj);
                 } else {
-                    console.log("ELSE ++");
-                    endOfFirstTag = endOfFirstTag.replace(specials.helperTag,"");
-                    closingTagsNeeded++;
-                    return discoverIndedentation();
+                    if( obj.hasOwnProperty( prop ) ) {
+                        thisObj = obj[prop];    
+                    } else {
+                        continue;
+                    }
+                    
+                    if(filter){
+                        thisObj = filter(thisObj);
+                        filterAddon = "\\|" + propAndFilter[1];
+                    } else {
+                        filterAddon = "";
+                    }
+                    toParse = toParse.replace(new RegExp("{" + prop + filterAddon + "}", "g"), obj[prop]);
                 }
-
-            }
-
-            return closingTagLocation;
-        }
-
-        function setupHelper(helper) {
-            specials.helperTag = specials.intro + helper.tag;
-            specials.endHelperTag = specials.outro + helper.tag;
-            var indexOfStartHelperTag = html.indexOf( specials.helperTag ),
-                indexOfEndHelperTag = html.indexOf( specials.endHelperTag ),
-                toReplace,
-                tempPart,
-                toBeParsedA,
-                toBeParsed,
-                context;
-            if(indexOfStartHelperTag === -1) {
-                return null;
-            }
-            indexOfEndHelperTag = findMatchingEndTag(indexOfStartHelperTag, helper);
-            console.log(indexOfEndHelperTag);
-            context = html.substring(indexOfStartHelperTag,html.indexOf(specials.introEnd)).replace(specials.helperTag,"").trim();
-            // this is the part to be replaced out of said template. 
-            toReplace = html.substring(indexOfStartHelperTag,indexOfEndHelperTag + specials.endHelperTag.length + specials.introEnd.length);
-            tempPart = html.substring(html.indexOf(specials.introEnd) + specials.introEnd.length).trim();
-            //whitespace removal
-            toBeParsedA = tempPart.substring(0,tempPart.indexOf(specials.endHelperTag)).split("\n");
-            for (var i = 0; i < toBeParsedA.length; i++) {
-                toBeParsedA[i] = toBeParsedA[i].trim();
-            }
-
-            toBeParsed = toBeParsedA.join("");
-            // end whitespace removeal
-            return { context: context, unparsed: toBeParsed };
-        }
-
-        function parseData(tag, data, obj) {
-            return data.replace( new RegExp( "{{" + tag + "}}", "g" ), obj );
-        }
-
-        function loopData(toParse, objs) {
-            var thing,
-                freshParse,
-                toReturnHTML = [],
-                s = "";
-            for (var i = 0; i < objs.length; i++) {
-                thing = objs[i];
-                freshParse = toParse;
-                for( s in thing ) {
-                    freshParse = parseData(s, freshParse, thing[s]);
-                }
-                toReturnHTML.push(freshParse);
-            }
-            return toReturnHTML.join("");
-        }
-        // parseEachFromHTML(obj);
-        // 
-        var eachHelper = {
-            tag: "each",
-            action: function(html, obj, context, unparsed) {
-                var newHTML = html;
-                newHTML = loopData(unparsed, obj[context]);
-                return newHTML;
-            }
-        };
-        var helpers = [
-            eachHelper
-        ];
-        for (var i = 0; i < helpers.length; i++) {
-            var helper = helpers[i];
-            var helperData = setupHelper(helper);
-            if(helperData){
-                html = helper.action(html, obj, helperData.context, helperData.unparsed);
-                console.log(html)
-                //reparse if is inline;
-                // i--;    
             }
         }
-
-        return html;
+        return toParse;
     };
-
-
-        // var endString = html,
-        // s = "";
-        // for ( s in obj ) {
-        //     endString = endString.replace( new RegExp( "{{" + s + "}}", "g" ), obj[s] );
-        // }
-        //     return endString;
-        // };
 
     J.extends = function( SuperClass, definitionObj ) {
         var SubClass = makeClass(),
@@ -319,6 +360,61 @@
 
     J.isString = function( obj ) {
         return typeof obj === "string";
+    };
+    J._IEVersion = null;
+    J.IEVersion = function() {
+        if(J._IEVersion){
+            return J._IEVersion;
+        }
+        if(document.all && !window.XMLHttpRequest){
+            // IE6  or older
+            return J._IEVersion = "<=6";
+        } else if (document.all && !document.querySelector){
+            // IE7  or older
+            return J._IEVersion = "<=7";
+        } else if(document.all && !document.addEventListener){
+            // IE8  or older
+            return J._IEVersion = "<=8";
+        } else if(document.all && !window.atob){
+            // IE9  or older
+            return J._IEVersion = "<=9";
+        } else if(document.all) {
+            // 10 or older
+            return J._IEVersion = "<=10";
+        }
+    };
+
+    J.isIE = function(userAgent) {
+        // Works for the IE's that we have to worry about.
+        userAgent = userAgent || navigator.userAgent;
+        return userAgent.indexOf("MSIE ") > -1 || userAgent.indexOf("Trident/") > -1;
+    };
+
+    J.IEAtLeast = function(num) {
+        // Why would anyone ever need at least version 6 of IE? I have no idea.
+        if(num === 6){
+            if(J.IEVersion() === "<=6" || J.IEVersion() === "<=7" || J.IEVersion() === "<=8" || J.IEVersion() === "<=9" || J.IEVersion() === "<=10"){
+                return true;
+            }
+        }
+        if(num === 7){
+            if(J.IEVersion() === "<=7" || J.IEVersion() === "<=8" || J.IEVersion() === "<=9" || J.IEVersion() === "<=10"){
+                return true;
+            }
+        } else if(num === 8){
+            if(J.IEVersion() === "<=8" || J.IEVersion() === "<=9" || J.IEVersion() === "<=10"){
+                return true;
+            }    
+        } else if(num === 9){
+            if(J.IEVersion() === "<=9" || J.IEVersion() === "<=10"){
+                return true;
+            }    
+        } else if(num === 10) {
+            if(J.IEVersion() === "<=10"){
+                return true;
+            }
+        }
+        return false;
     };
 
     J.isEmpty = function( obj ) {
@@ -372,7 +468,10 @@
                 this._properties[s] = properties[s];
             }
         }
-        // this._properties = properties;
+    };
+
+    J.Blueprint.prototype._super = function(SuperClass,toCall,params){
+        SuperClass.prototype[toCall].apply(this,params);
     };
 
     J.Blueprint.prototype.get = function( arg ) {
@@ -407,11 +506,36 @@
     J.App.prototype.init = function() {
         this.events = J.Events();
         this.views = {};
+        this.mediators = {};
+        this.config = {
+            root: document.URL,
+            template: document.URL + "/templates"
+        };
+        this.templateCache = {};
     };
 
     J.App.prototype.addView = function( name, view ) {
         this.views[name] = view;
         return view;
+    };
+
+    J.App.prototype.addMediator = function( view, mediator ) {
+        this.mediators[view] = mediator;
+        this.views[view].mediator = mediator;
+        J._App.events.trigger(this.views[view].el, J.EventTypes["Mediator.ADDED"],
+        {
+                mediator: mediator,
+                view: view
+        });
+        return mediator;
+    };
+
+    J.App.prototype.config = function( configObj ) {
+        if(configObj !== "undefined"){
+            this.config = configObj;    
+        } else {
+            return this.config;
+        }  
     };
 
     J.App.prototype.getView = function( name ) {
@@ -433,14 +557,35 @@
     };
 
     // http://stackoverflow.com/questions/5342917
-    J.Events.prototype.trigger = function( el, eventName ) {
+    J.Events.prototype.trigger = function( el, eventName, data ) {
         var event;
-        if ( document.createEvent ) {
-            event = document.createEvent( "HTMLEvents" );
-            event.initEvent( eventName, true, true );
+        if ( window.document.createEvent ) {
+
+            if(typeof data !== "undefined") {
+                if(J.isJQueryAvailable()){
+                    $(el).trigger(eventName, data);
+                    return;
+                }
+                if( J.IEAtLeast(9) || J.isIE() ){
+                    event = window.document.createEvent(eventName);
+                    event.initCustomEvent(eventName, false, false, data);
+                } else {
+                    event = new CustomEvent(eventName, {
+                        detail: data 
+                    });
+                    el.dispatchEvent(event);
+                }
+            } else {
+                if(J.isJQueryAvailable()){
+                    $(el).trigger(eventName);
+                    return;
+                }
+                event = document.createEvent( "HTMLEvents" );
+                event.initEvent( eventName, true, true );
+            }
         }else if ( document.createEventObject ) {// IE < 9
             event = document.createEventObject();
-            event.eventType = eventName;
+            event.eventType = eventName;    
         }
         event.eventName = eventName;
         if ( el.dispatchEvent ) {
@@ -456,9 +601,17 @@
     };
 
     J.Events.prototype.add = function( el, type, handler ) {
+        if(J.isJQueryAvailable()){
+            $(el).on(type, handler);
+            return;
+        }
         if ( el.addEventListener ) {
             el.addEventListener( type, handler, false );
         }else if ( el.attachEvent ) {// IE < 9
+            if(J.isJQueryAvailable()){
+                $(el).on(type, handler);
+                return;
+            }
             el.attachEvent( "on" + type, handler );
         }else {
             el["on" + type] = handler;
@@ -470,7 +623,12 @@
         if ( el.removeEventListener ) {
             el.removeEventListener( type, handler, false );
         }else if ( el.detachEvent ) {// IE < 9
-            el.detachEvent( "on" + type, handler );
+            if(J.isJQueryAvailable()){
+                $(el).off(type, handler);
+                return;
+            } else {
+                el.detachEvent( "on" + type, handler );    
+            }
         }else {
             el["on" + type] = null;
         }
@@ -496,18 +654,19 @@
 
     J.View = makeClass();
     J.View.prototype = Object.create( J.Blueprint.prototype );
-    J.View.prototype.init = function( el, properties ) {
-
+    J.View.prototype.init = function( properties ) {
+        J.Blueprint.prototype.init.call( this );
         if ( typeof properties !== "undefined" ) {
             for ( var s in properties ) {
                 if ( s === "template" ) {
                     this.template = properties[s];
                 } else if ( s === "bind" ) {
                     this.bindables = properties[s];
+                } else if ( s === "el" ) {
+                    this.el = properties[s];
                 }
             }
         }
-        this.el = el;
     };
 
     J.View.prototype.initBindables = function() {
@@ -558,38 +717,28 @@
         }
     };
 
-    J.View.prototype.render = function( data, callback, $to ) {
-        var renderArguments,
-            finished = function() {
-            if ( this.bindables ) {
-                this.initBindables.call( this );
-                this.initBindableListeners.call( this );
-            }
-            callback.call( this );
-        };
-        if ( this.template ) {
-            if ( this.template.type === J.types.URL ) {
-                renderArguments = arguments;
-                this.template.get( function( html ) {
-                    if ( html.status === "OK" ) {
-                        if ( renderArguments.length === 3 && typeof $to === "string" ) {
-                            this.el.querySelector( $to ).innerHTML = J.parse( html.data, data );
-                        } else {
-                            this.el.innerHTML = J.parse( html.data, data );
-                        }
-
-                        J.getApp.Events.trigger( this.el, "renderComplete" );
-                        finished.call( this );
-                    }
-                }.bind( this ) );
-            } else if ( this.template.type === J.types.HTML ) {
-                this.el.innerHTML = J.parse( this.template.get(), data );
-                finished();
-            }
-
-        } else {
+    J.View.prototype.render = function( data, type ) {
+        var renderedHTML;
+        if(!this.template){
             throw J._makeError( "template_missing", "View is missing a template", null );
         }
+        J.template(this.template, data, type, function(rendered){
+            renderedHTML = rendered;
+            J._App.events.trigger(this.el, "View.TEMPLATE_PARSED",{
+                data: renderedHTML
+            });
+            
+            this.el.innerHTML = renderedHTML;
+            
+            // bind the events on this element to this mediator
+            J.bindTemplate(this.mediator, this.el);
+        }.bind(this));
+            // finished = function() {
+            //     if ( this.bindables ) {
+            //         this.initBindables.call( this );
+            //         this.initBindableListeners.call( this );
+            //     }
+            // };
     };
 
     J.Mediator = makeClass();
@@ -611,6 +760,8 @@
             if ( !J.isEmpty( this._events ) && !J.isEmpty( this._listeners ) ) {
                 this.events.call( this );
             }
+
+            if( !J.isEmpty( this._listeners ) ) {}
         }
     };
 
@@ -628,9 +779,18 @@
                     actionTarget = s;
                     action = actionTarget.substring( 0, actionTarget.indexOf( " " ) );
                     target = actionTarget.substring( actionTarget.indexOf( " " ) + 1 );
-                    query = this.view.el.querySelector( target );
+                    if(J.isJQueryAvailable()){
+                        query = $(target);
+                    } else {
+                        query = this.view.el.querySelector( target );
+                    }
+
                     if ( query ) {
-                        query.addEventListener( action, this._listeners[this._events[s]] );
+                        if(J.isJQueryAvailable()){
+                            query.on(action, this._listeners[this._events[s]]);
+                        } else {
+                            query.addEventListener( action, this._listeners[this._events[s]] );    
+                        }
                     } else {
                         missingEvents.push( { action: query } );
                     }
