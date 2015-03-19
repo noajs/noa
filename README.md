@@ -148,6 +148,40 @@ console.log(
 // Jeff 30 0 false
 ```
 
+#### `_super`
+When you inherit from `Blueprint` you will have a `_super` method avaiable to you. You can use it to call the parent class method and override your own. Here is a basic implementation.
+```javascript
+var container = document.getElementsByClassName("container")[2];
+var View = J.extends(J.View, {
+	render: function(data) {
+		this._super(J.View,"render",[data]);
+	}
+});
+```
+`this._super` takes the `SuperClass` as the first parameter. The name of the function as a string as the second parameter and the parameters you want to pass to said function as an array. In this example we are passing just one parameter to the super call. Then we can call `render` on our instance of our custom `View` class
+
+```javascript
+var view = app.addView("list",View({
+	el: container,
+	template: "sometemplate.html#item"
+}));
+
+view.render({link:"google.com",
+	name:{
+		first:"jeff",
+		middle: {
+			initial: "B",
+			full:"Benjamin"
+		},
+		last:"Johnston",
+		quote:"and you know he was a good dog.",
+		nickname: "jack hamm fatty"
+	}
+});
+```
+See more on template rendering below.
+
+
 ### The Mapper
 You can use the `Mapper` class to get back a single instance of your model, or a new instance of your model. Make sure to create a single instance of a new `Mapper` with something like this: 
 
