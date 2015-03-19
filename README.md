@@ -241,7 +241,8 @@ J.addFilter("camelCase",function(str){
 You can create a view and link it to a main element. When rendering you can render in context of a child of that view or for the whole view. There is a couple of typical MVC issues with `Views` that we have solved. See `Mediators` below.
 
 ```javascript
-var view = J.View(document.getElementById("content"),{
+var view = J.View({
+	el: document.getElementById("content"),
 	template : J.html("<div>{{name}}</div>");
 });
 ```
