@@ -782,14 +782,16 @@
                     if(J.isJQueryAvailable()){
                         query = $(target);
                     } else {
-                        query = this.view.el.querySelector( target );
+                        query = this.view.el.querySelectorAll( target );
                     }
 
                     if ( query ) {
                         if(J.isJQueryAvailable()){
                             query.on(action, this._listeners[this._events[s]]);
                         } else {
-                            query.addEventListener( action, this._listeners[this._events[s]] );    
+                            for (var i = 0; i < query.length; i++) {
+                                query[i].addEventListener( action, this._listeners[this._events[s]] );
+                            }
                         }
                     } else {
                         missingEvents.push( { action: query } );
@@ -832,6 +834,29 @@
     J.Mapper.prototype.getModel = function( name, properties ) {
         var p = typeof properties === undefined ? {} : properties;
         return this.modelMap[name]( p );
+    };
+
+    J.Effects = {};
+    J.Effects.slideDown = function (element, duration, finalheight, callback) {
+        var s = element.style;
+        s.height = "0px";
+
+        var y = 0,
+            framerate = 10,
+            one_second = 1000,
+            interval = one_second*duration/framerate,
+            totalframes = one_second*duration/interval,
+            heightincrement = finalheight/totalframes,
+            tween = function () {
+            y += heightincrement;
+            s.height = y + "px";
+            if (y < finalheight) {
+                setTimeout(tween,interval);
+            } else {
+                callback();
+            }
+        };
+        tween();
     };
 
     function makeClass() {
