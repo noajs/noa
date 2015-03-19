@@ -13,6 +13,7 @@ Just is a fast, small, thoughtfully written javascript MVC Framework. It's has 3
 - ["Static" Methods](#static-methods)
 - [The Blueprint](#the-blueprint)
 - [Getting and Setting properties](#getting-and-setting-properties)
+- [super](#_super)
 - [The Mapper](#the-mapper)
 - [Data Binding](#data-binding)
 - [Templating Engine](#templating-engine)
