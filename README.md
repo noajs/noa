@@ -1,4 +1,5 @@
 ![Just](https://raw.githubusercontent.com/jsz1/just/master/just.png)
+
 Just is a fast, small, thoughtfully written javascript MVC Framework. It's has 3 main goals.
   
   - To be everything you need.
