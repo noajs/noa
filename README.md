@@ -175,7 +175,7 @@ view.render({link:"google.com",
 		},
 		last:"Johnston",
 		quote:"and you know he was a good dog.",
-		nickname: "jack hamm fatty"
+		nickname: "Jacky"
 	}
 });
 ```
