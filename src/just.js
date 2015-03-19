@@ -22,7 +22,9 @@
         "SAD": ":-(",
         "HAPPY": ":-)",
         "OK": "OK",
-        "NO_GOOD": "NO GOOD"
+        "NO_GOOD": "NO GOOD",
+        "JSON" : "JSON",
+        "TEXT" : "TEXT" 
     };
 
     J._App = null;
@@ -35,13 +37,13 @@
         if ( J._App ) {
             return J._App;
         } else {
-            throw J.makeError( "register", "Register your App with " +
+            throw J._makeError( "register", "Register your App with " +
                 "J.registerApp( YourApp )", null );
         }
     };
 
-    J.makeError = function( id, msg, err ) {
-        var e = new Error( msg + "\nhhttps://github.com/jsz1/just/blob/master/README.md#" + id );
+    J._makeError = function( id, msg, err ) {
+        var e = new Error( msg + "\nhttps://github.com/jsz1/just/blob/master/README.md#" + id );
         e.justType = id;
         if ( err ) {
             e.originalError = err;
@@ -50,30 +52,44 @@
     };
 
     J.l = function() {
-        console.log( Array.prototype.slice.call( arguments ) );
+        
     };
 
-    J.url = function( url ) {
+    J.url = function( url,dataType ) {
         return {
             type: J.types.URL,
             get: function( callback ) {
-                var request = new XMLHttpRequest();
+                var request = new XMLHttpRequest(),
+                    response;
                 request.open( "GET", url, true );
                 request.onload = function() {
+                    if(typeof dataType === "undefined") {
+                        dataType = J.types.TEXT;
+                    }
                     if ( request.status >= 200 && request.status < 400 ) {
                         // Success!
+                        if( dataType === J.types.JSON ) {
+                            response = JSON.parse(request.responseText);
+                        } else if ( dataType === J.types.TEXT ) {
+                            response = request.responseText;
+                        }
                         callback( {
                             status: J.types.OK,
                             statuz: J.types.HAPPY,
                             statusCode: request.status,
-                            data: request.responseText
+                            data: response
                         } );
                     } else {
+                        if( dataType === J.types.JSON ) {
+                            response = JSON.parse({ error: request.responseText });
+                        } else if ( dataType === J.types.TEXT ) {
+                            response = request.responseText;
+                        }
                         callback( {
                             status: J.types.NO_GOOD,
                             statuz: J.types.SAD,
                             statusCode: request.status,
-                            data: request.responseText
+                            data: response
                         } );
                     }
                 };
@@ -113,21 +129,149 @@
     J.randString = function( n ) {
         var text = "J",
             possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
-            i = 0;
-        for ( i = 0; i < n; i++ ) {
+            i = 1;
+        for ( i = 1; i < n; i++ ) {
             text += possible.charAt( Math.floor( Math.random() * possible.length ) );
         }
         return text;
     };
 
     J.parse = function( html, obj ) {
-      var endString = html,
-        s = "";
-      for ( s in obj ) {
-        endString = endString.replace( new RegExp( "{{" + s + "}}", "g" ), obj[s] );
-      }
-      return endString;
+        var specials = {
+            intro: "{{#",
+            introEnd: "}}",
+            outro: "{{/"
+        };
+
+        function findMatchingEndTag(start, helper) {
+            
+            // html.indexOf();
+            var firstTagLocation = start + specials.helperTag.length,
+                firstTagSection = html.substring(start + specials.helperTag.length),
+                endOfFirstTag =  firstTagSection.substring(firstTagSection.indexOf(specials.introEnd) + specials.introEnd.length),
+                closingTagsNeeded = 0,
+                closingTagLocation = discoverIndedentation();
+
+            function discoverIndedentation(){
+                console.log("discoverIndedentation");
+                var openTagNext = endOfFirstTag.indexOf(specials.helperTag),
+                    closeTagNext = endOfFirstTag.indexOf(specials.endHelperTag);
+                    console.log(closingTagsNeeded);
+                if(openTagNext === -1) {
+                    console.log("open-1");
+                    if(closeTagNext === -1) {
+                        console.log("close-1");
+                        throw J._makeError( "closing_" + helper.tag + "_missing", "Template is missing a matching closing \"" + helper.tag + "\" tag", null );
+                    } else {
+                        console.log("closed-else");
+                        if(closingTagsNeeded > 0){
+                            console.log("closed-else>0");
+                            endOfFirstTag = endOfFirstTag.replace(specials.endHelperTag,"");
+                            console.log(endOfFirstTag);
+                            closingTagsNeeded--;
+                            return discoverIndedentation();
+                        } else {
+                            console.log("closed-else=0");
+                            return closeTagNext;    
+                        }
+                        
+                    }
+                } else {
+                    console.log("ELSE ++");
+                    endOfFirstTag = endOfFirstTag.replace(specials.helperTag,"");
+                    closingTagsNeeded++;
+                    return discoverIndedentation();
+                }
+
+            }
+
+            return closingTagLocation;
+        }
+
+        function setupHelper(helper) {
+            specials.helperTag = specials.intro + helper.tag;
+            specials.endHelperTag = specials.outro + helper.tag;
+            var indexOfStartHelperTag = html.indexOf( specials.helperTag ),
+                indexOfEndHelperTag = html.indexOf( specials.endHelperTag ),
+                toReplace,
+                tempPart,
+                toBeParsedA,
+                toBeParsed,
+                context;
+            if(indexOfStartHelperTag === -1) {
+                return null;
+            }
+            indexOfEndHelperTag = findMatchingEndTag(indexOfStartHelperTag, helper);
+            console.log(indexOfEndHelperTag);
+            context = html.substring(indexOfStartHelperTag,html.indexOf(specials.introEnd)).replace(specials.helperTag,"").trim();
+            // this is the part to be replaced out of said template. 
+            toReplace = html.substring(indexOfStartHelperTag,indexOfEndHelperTag + specials.endHelperTag.length + specials.introEnd.length);
+            tempPart = html.substring(html.indexOf(specials.introEnd) + specials.introEnd.length).trim();
+            //whitespace removal
+            toBeParsedA = tempPart.substring(0,tempPart.indexOf(specials.endHelperTag)).split("\n");
+            for (var i = 0; i < toBeParsedA.length; i++) {
+                toBeParsedA[i] = toBeParsedA[i].trim();
+            }
+
+            toBeParsed = toBeParsedA.join("");
+            // end whitespace removeal
+            return { context: context, unparsed: toBeParsed };
+        }
+
+        function parseData(tag, data, obj) {
+            return data.replace( new RegExp( "{{" + tag + "}}", "g" ), obj );
+        }
+
+        function loopData(toParse, objs) {
+            var thing,
+                freshParse,
+                toReturnHTML = [],
+                s = "";
+            for (var i = 0; i < objs.length; i++) {
+                thing = objs[i];
+                freshParse = toParse;
+                for( s in thing ) {
+                    freshParse = parseData(s, freshParse, thing[s]);
+                }
+                toReturnHTML.push(freshParse);
+            }
+            return toReturnHTML.join("");
+        }
+        // parseEachFromHTML(obj);
+        // 
+        var eachHelper = {
+            tag: "each",
+            action: function(html, obj, context, unparsed) {
+                var newHTML = html;
+                newHTML = loopData(unparsed, obj[context]);
+                return newHTML;
+            }
+        };
+        var helpers = [
+            eachHelper
+        ];
+        for (var i = 0; i < helpers.length; i++) {
+            var helper = helpers[i];
+            var helperData = setupHelper(helper);
+            if(helperData){
+                html = helper.action(html, obj, helperData.context, helperData.unparsed);
+                console.log(html)
+                //reparse if is inline;
+                // i--;    
+            }
+        }
+
+        return html;
     };
+
+
+        // var endString = html,
+        // s = "";
+        // for ( s in obj ) {
+        //     endString = endString.replace( new RegExp( "{{" + s + "}}", "g" ), obj[s] );
+        // }
+        //     return endString;
+        // };
 
     J.extends = function( SuperClass, definitionObj ) {
         var SubClass = makeClass(),
@@ -181,6 +325,10 @@
 
         // null and undefined are "empty"
         if ( obj === null ) {
+            return true;
+        }
+
+        if ( typeof obj === "undefined" ) {
             return true;
         }
 
@@ -257,7 +405,26 @@
 
     J.App = makeClass();
     J.App.prototype.init = function() {
-        this.Events = J.Events();
+        this.events = J.Events();
+        this.views = {};
+    };
+
+    J.App.prototype.addView = function( name, view ) {
+        this.views[name] = view;
+        return view;
+    };
+
+    J.App.prototype.getView = function( name ) {
+        return this.views[name];
+    };
+
+    J.App.prototype.getAllViews = function() {
+        return this.views;
+    };
+
+    J.App.prototype.removeView = function( name ) {
+        delete this.views[name];
+        return name;
     };
 
     J.Events = makeClass();
@@ -285,6 +452,7 @@
         }else if ( el["on" + eventName] ) {
             el["on" + eventName]();
         }
+        return el;
     };
 
     J.Events.prototype.add = function( el, type, handler ) {
@@ -295,6 +463,7 @@
         }else {
             el["on" + type] = handler;
         }
+        return el;
     };
 
     J.Events.prototype.remove = function( el, type, handler ) {
@@ -305,6 +474,8 @@
         }else {
             el["on" + type] = null;
         }
+
+        return el;
     };
 
     // Model
@@ -417,7 +588,7 @@
             }
 
         } else {
-            throw J.makeError( "template_missing", "View is missing a template", null );
+            throw J._makeError( "template_missing", "View is missing a template", null );
         }
     };
 
@@ -463,7 +634,7 @@
                     } else {
                         missingEvents.push( { action: query } );
                     }
-                    // console.log( this.view.el.querySelector( target ) )
+                    // 
                 }
             }
         }

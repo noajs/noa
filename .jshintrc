@@ -14,7 +14,8 @@
 	"globals" : { 
 		"J" : true, 
 		"define" : true, 
-		"QUnit" : true 
+		"QUnit" : true,
+		"$" : true
 	},
 	"node": true
 }
