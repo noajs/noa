@@ -1,21 +1,19 @@
 # Just
 
 Just is a fast, small, thoughtfully written javascript MVC Framework. It's has 3 main goals.
-
-To be:
   
-  - Everything you need.
-  - Solve common problems and pitfalls that large and small apps have.
-  - Easy to write.
+  - To be everything you need.
+  - To solve common problems and pitfalls that large and small apps have.
+  - To be easy to write.
 
 ## Documentation
 
 - [J](#j)
 - [J.extends`](#jextends)
-- [Prototype](#prototype)
 - ["Static" Methods](#static-methods)
 - [The Blueprint](#the-blueprint)
 - [Getting and Setting properties](#getting-and-setting-properties)
+- [super](#_super)
 - [The Mapper](#the-mapper)
 - [Data Binding](#data-binding)
 - [Templating Engine](#templating-engine)
@@ -24,12 +22,14 @@ To be:
 - [Events](#events)
 - [App](#app)
 
+Just has **0** dependecies. IE >= 9 is supported. JQuery is not required to use Just. However if you happen to be using JQuery (if the JQuery object is available), Just will use it to support browsers < IE 9.  Bottom line: Just add JQuery for <=IE8.
+
 ### J
 * Main `J` Object which contains static methods.
 
 ### J.extends`
 
-* Create prototypal inheritance easily: 
+* Create inheritance easily: 
  `J.extends(Superclass, Class def (optional))`
  Example:
  
@@ -56,9 +56,7 @@ tm = TinyModel();
 tm.dance();
 tm.bump();
 ```
-
-### Prototype
-You can add instance methods using the prototype method as you normally would.
+You can also add instance methods using the prototype method as you normally would.
 
 ```javascript
 var TinyModel = J.extends(MiniModel);
@@ -153,6 +151,40 @@ console.log(
 // Jeff 30 0 false
 ```
 
+#### `_super`
+When you inherit from `Blueprint` you will have a `_super` method avaiable to you. You can use it to call the parent class method and override your own. Here is a basic implementation.
+```javascript
+var container = document.getElementsByClassName("container")[2];
+var View = J.extends(J.View, {
+	render: function(data) {
+		this._super(J.View,"render",[data]);
+	}
+});
+```
+`this._super` takes the `SuperClass` as the first parameter. The name of the function as a string as the second parameter and the parameters you want to pass to said function as an array. In this example we are passing just one parameter to the super call. Then we can call `render` on our instance of our custom `View` class
+
+```javascript
+var view = app.addView("list",View({
+	el: container,
+	template: "sometemplate.html#item"
+}));
+
+view.render({link:"google.com",
+	name:{
+		first:"jeff",
+		middle: {
+			initial: "B",
+			full:"Benjamin"
+		},
+		last:"Johnston",
+		quote:"and you know he was a good dog.",
+		nickname: "Jacky"
+	}
+});
+```
+See more on template rendering below.
+
+
 ### The Mapper
 You can use the `Mapper` class to get back a single instance of your model, or a new instance of your model. Make sure to create a single instance of a new `Mapper` with something like this: 
 
@@ -197,35 +229,57 @@ Using `data-j-bindable` means that anything that is populating a name property w
 You can create dynamic templates in HTML. You can use your own templating engine as well but to use the built in one just create a template file. For example `templates/hello.html`
 
 ```html
-<div>{{name}}</div>
-<p>His name is {{name}}</p>
+<!-- somefile.html -->
+*/list\*
+<ul></ul>
+*\list/*
+
+*/item\*
+<li><a href="{link}">
+	A dog named {name.first} {name.middle.full|capitalize} {name.last|capitalize}
+	<p>{name.quote|titleize}</p>
+	<p>AKA: {name.nickname|camelCase}</p>
+</a></li>
+*\item/*
 ```
-Now you can load this template into your view. 
+You can tell Just where to find your templates. 
 
 ```javascript
-var view = J.View(document.getElementById("content"),{
-	template : J.url("templates/hello.html"),
+J.registerApp( J.App() );
+var app = J.getApp();
+app.config = {
+	root: "http://localhost:3000",
+	templates: "http://localhost:3000/templates"
+};
+```
+With this info in hand Just will make a url request for your templates, but only when you render. You tell Just which template on the page you want to grab. `*/templatename\*` refers to the template name and wrap the end with `*\templatename/*`. You can then grab the template like so
+```javascript
+var container = document.getElementsByClassName("container")[2];
+var View = J.extends(J.View);
+var view = app.addView("list",View({
+	el: container,
+	template: "somefile.html#item", //#item refers to the template name.
+}));
+```
+Notice that our view can grab variables. You can wrap the variable with a single curly brace to add a variable in there.
+
+We also added a filter to our variable using the pipe `|`. There are a few included filters. You can add your own very easily. 
+
+```javascript
+J.addFilter("camelCase",function(str){
+	return str.replace(/^([A-Z])|\s(\w)/g, function(match, p1, p2, offset) {
+	if (p2) return p2.toUpperCase();
+	return p1.toLowerCase();        
+	});
 });
 ```
-You can also load the data by plain HTML injected into the view: 
 
-```javascript
-var view = J.View(document.getElementById("content"),{
-	template : J.html("<div>{{name}}</div><p>His name is {{name}}</p>"),
-});
-```
-Obviously you could use some sort of jQuery or other selectors to get your HTML into this method. 
-
-You can then render your view by passing a data object into your `render` method.
-
-```javascript
-view.render({name : "Jimmy"});
-```
 ### Views
 You can create a view and link it to a main element. When rendering you can render in context of a child of that view or for the whole view. There is a couple of typical MVC issues with `Views` that we have solved. See `Mediators` below.
 
 ```javascript
-var view = J.View(document.getElementById("content"),{
+var view = J.View({
+	el: document.getElementById("content"),
 	template : J.html("<div>{{name}}</div>");
 });
 ```
@@ -269,14 +323,15 @@ We also have a convenience method you'll notice from the last example `J.l` whic
 We have cross browser events available and you would (but won't have to see `App` below) create 1 event class/object for app wide event triggering and listening. 
 
 ```javascript
-var Events = J.Events();
+// New instance of Events class.
+var events = J.Events();
 
 // Subscribe
-Events.add(document.body,'customEvent',function() {
+events.add(document.body,'customEvent',function() {
 	console.log("Event triggered")
 });
 // Trigger
-Events.trigger(document.body,'customEvent');
+events.trigger(document.body,'customEvent');
 ```
 
 ### App
@@ -286,12 +341,22 @@ You shouldn't need to create the `Event` on your own. It is included with your a
 var App = J.App();
 
 // Subscribe
-App.Events.add(document.body,'customEvent',function() {
+App.events.add(document.body,'customEvent',function() {
 	console.log("Event triggered")
 });
 // Trigger
-App.Events.trigger(document.body,'customEvent');
+App.events.trigger(document.body,'customEvent');
 ```
+You can set config values on your `App`.
+```javascript
+J.registerApp( J.App() );
+var app = J.getApp();
+app.config = {
+	root: "http://localhost:3000",
+	templates: "http://localhost:3000/templates"
+};
+```
+
 ### Mediator
 The Mediator (sometimes called the controller) is listening on behalf of the view and communicates with Models. The view in MVC is supposed to only be dealing with display information. If that's true then we don't do any logic *for* the view on the view. The problem in typical javascript MVC frameworks is that it is hard to tell the difference between the HTML view and the javascript view. Well in **Just**, we have solved that. You'll typically have one of two situations: 
 
