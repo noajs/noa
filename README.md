@@ -288,6 +288,16 @@ App.events.add(document.body,'customEvent',function() {
 // Trigger
 App.events.trigger(document.body,'customEvent');
 ```
+You can set config values on your `App`.
+```javascript
+J.registerApp( J.App() );
+var app = J.getApp();
+app.config = {
+	root: "http://localhost:3000",
+	templates: "http://localhost:3000/templates"
+};
+```
+
 ### Mediator
 The Mediator (sometimes called the controller) is listening on behalf of the view and communicates with Models. The view in MVC is supposed to only be dealing with display information. If that's true then we don't do any logic *for* the view on the view. The problem in typical javascript MVC frameworks is that it is hard to tell the difference between the HTML view and the javascript view. Well in **Just**, we have solved that. You'll typically have one of two situations: 
 
