@@ -23,7 +23,7 @@ Just is a fast, small, thoughtfully written javascript MVC Framework. It's has 3
 - [App](#app)
 
 # Just
-Just has **0** dependecies. IE >= 9 is supported. JQuery is not required to use Just. However if you happen to be using JQuery (if the JQuery object is available), Just will use it to support browsers < IE 9.  Bottom line: Just add JQuery for <=IE8.
+Just has **0** dependecies. IE >= 9 is supported. JQuery is not required. However if you happen to be using JQuery (if the JQuery object is available), Just will use it to support browsers.  **Bottom line:** Add JQuery if you want.
 
 ### J
 * Main `J` Object which contains static methods.
