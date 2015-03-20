@@ -23,7 +23,7 @@ Just is a fast, small, thoughtfully written javascript MVC Framework. It's has 3
 - [App](#app)
 
 # Just
-Just has **0** dependecies. IE >= 9 is supported. JQuery is not required. However if you happen to be using JQuery (if the JQuery object is available), Just will use it to support browsers.  **Bottom line:** Add JQuery if you want.
+Just has **0** dependecies. IE >= 9 is supported.
 
 ### J
 * Main `J` Object which contains static methods.
@@ -372,3 +372,6 @@ All that to say you can use your `Mediator` class in two ways.
 1. Where it acts with the view as the HTML. In that case you'll pass an HTML element to your `Mediator`. 
 
 2. Where you have a view responsible for populating the template. In that case you'll pass a view class to the `Mediator`.
+
+### JQuery
+JQuery is not required. However if you happen to be using JQuery (if the JQuery object is available), Just will use it to support browsers.  **Bottom line:** Add JQuery if you want.
