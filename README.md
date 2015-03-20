@@ -1,7 +1,9 @@
 ![Just](https://raw.githubusercontent.com/jsz1/just/master/just.png)
 
 Just is a fast, small, thoughtfully written javascript MVC Framework. It's has 3 main goals.
-  
+
+[![Build Status](https://img.shields.io/travis/then/promise/master.svg)](https://travis-ci.org/then/promise)
+
   - To be everything you need.
   - To solve common problems and pitfalls that large and small apps have.
   - To be easy to write.
@@ -276,8 +278,7 @@ J.addFilter("camelCase",function(str){
 ```
 
 ### Views
-You can create a view and link it to a main element. When rendering you can render in context of a child of that view or for the whole view. There is a couple of typical MVC issues with `Views` that we have solved. See `Mediators` below.
-
+You can create a view and link it to a main element. When rendering you can render in context of a child of that view or for the whole view. There is a couple of typical MVC issues with `Views` that we have solved. See `Mediators` below. When the `render` method is called your view can load their own template by making a URL request to your templates directory (which you can configure on your `App.config` configuration. Any subsiquent calls to your `render` method will use a cached version of your templates. 
 ```javascript
 var view = J.View({
 	el: document.getElementById("content"),
