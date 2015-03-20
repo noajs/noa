@@ -3,7 +3,7 @@
 Just is a fast, small, thoughtfully written javascript MVC Framework. It's has 3 main goals.
 
 [![Build Status](https://img.shields.io/travis/jsz1/just/master.svg)](https://travis-ci.org/jsz1/just)
-
+[![Dependency Status](https://img.shields.io/gemnasium/jsz1/just.svg)](https://gemnasium.com/jsz1/just)
   - To be everything you need.
   - To solve common problems and pitfalls that large and small apps have.
   - To be easy to write.
