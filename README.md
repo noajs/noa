@@ -2,9 +2,8 @@
 
 Noa is a fast, small, thoughtfully written javascript MVC Framework. It's has 3 main goals.
 
-[![Build Status](https://img.shields.io/travis/jsz1/noa/master.svg)](https://travis-ci.org/jsz1/noa)
 [![Dependency Status](https://img.shields.io/gemnasium/jsz1/noa.svg)](https://gemnasium.com/jsz1/noa)
-[![NPM version](https://img.shields.io/npm/v/justice.svg)](https://www.npmjs.org/package/justice)
+[![NPM version](https://img.shields.io/npm/v/noa.svg)](https://www.npmjs.org/package/justice)
 
   - To be everything you need.
   - To solve common problems and pitfalls that large and small apps have.
