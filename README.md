@@ -1,9 +1,9 @@
-![Just](https://raw.githubusercontent.com/jsz1/just/master/just.png)
+![Noa](https://raw.githubusercontent.com/jsz1/noa/master/noa.png)
 
-Just is a fast, small, thoughtfully written javascript MVC Framework. It's has 3 main goals.
+Noa is a fast, small, thoughtfully written javascript MVC Framework. It's has 3 main goals.
 
-[![Build Status](https://img.shields.io/travis/jsz1/just/master.svg)](https://travis-ci.org/jsz1/just)
-[![Dependency Status](https://img.shields.io/gemnasium/jsz1/just.svg)](https://gemnasium.com/jsz1/just)
+[![Build Status](https://img.shields.io/travis/jsz1/noa/master.svg)](https://travis-ci.org/jsz1/noa)
+[![Dependency Status](https://img.shields.io/gemnasium/jsz1/noa.svg)](https://gemnasium.com/jsz1/noa)
 [![NPM version](https://img.shields.io/npm/v/justice.svg)](https://www.npmjs.org/package/justice)
 
   - To be everything you need.
@@ -26,8 +26,8 @@ Just is a fast, small, thoughtfully written javascript MVC Framework. It's has 3
 - [Events](#events)
 - [App](#app)
 
-# Just
-Just has **0** dependecies. IE >= 9 is supported.
+# Noa
+Noa has **0** dependecies. IE >= 9 is supported.
 
 ### J
 * Main `J` Object which contains static methods.
@@ -166,7 +166,7 @@ var View = J.extends(J.View, {
 	}
 });
 ```
-`this._super` takes the `SuperClass` as the first parameter. The name of the function as a string as the second parameter and the parameters you want to pass to said function as an array. In this example we are passing just one parameter to the super call. Then we can call `render` on our instance of our custom `View` class
+`this._super` takes the `SuperClass` as the first parameter. The name of the function as a string as the second parameter and the parameters you want to pass to said function as an array. In this example we are passing one parameter to the super call. Then we can call `render` on our instance of our custom `View` class
 
 ```javascript
 var view = app.addView("list",View({
@@ -231,7 +231,7 @@ In your HTML you can setup an element to receive that data like so:
 Using `data-j-bindable` means that anything that is populating a name property will appear in that div. 
 
 ### Templating Engine
-You can create dynamic templates in HTML. You can use your own templating engine as well but to use the built in one just create a template file. For example `templates/hello.html`
+You can create dynamic templates in HTML. You can use your own templating engine as well but to use the built in one create a template file. For example `templates/hello.html`
 
 ```html
 <!-- somefile.html -->
@@ -247,7 +247,7 @@ You can create dynamic templates in HTML. You can use your own templating engine
 </a></li>
 *\item/*
 ```
-You can tell Just where to find your templates. 
+You can tell Noa where to find your templates. 
 
 ```javascript
 J.registerApp( J.App() );
@@ -257,7 +257,7 @@ app.config = {
 	templates: "http://localhost:3000/templates"
 };
 ```
-With this info in hand Just will make a url request for your templates, but only when you render. You tell Just which template on the page you want to grab. `*/templatename\*` refers to the template name and wrap the end with `*\templatename/*`. You can then grab the template like so
+With this info in hand Noa will make a url request for your templates, but only when you render. You tell Noa which template on the page you want to grab. `*/templatename\*` refers to the template name and wrap the end with `*\templatename/*`. You can then grab the template like so
 ```javascript
 var container = document.getElementsByClassName("container")[2];
 var View = J.extends(J.View);
@@ -321,7 +321,7 @@ var otherModel = J.Model({
 J.l(otherModel.toObject());
 J.l(otherModel.toJSON());
 ```
-We also have a convenience method you'll notice from the last example `J.l` which pipes directly to `console.log`. It's just easier to type. 
+We also have a convenience method you'll notice from the last example `J.l` which pipes directly to `console.log`. It's easier to type. 
 
 ### Events
 We have cross browser events available and you would (but won't have to see `App` below) create 1 event class/object for app wide event triggering and listening. 
@@ -362,9 +362,9 @@ app.config = {
 ```
 
 ### Mediator
-The Mediator (sometimes called the controller) is listening on behalf of the view and communicates with Models. The view in MVC is supposed to only be dealing with display information. If that's true then we don't do any logic *for* the view on the view. The problem in typical javascript MVC frameworks is that it is hard to tell the difference between the HTML view and the javascript view. Well in **Just**, we have solved that. You'll typically have one of two situations: 
+The Mediator (sometimes called the controller) is listening on behalf of the view and communicates with Models. The view in MVC is supposed to only be dealing with display information. If that's true then we don't do any logic *for* the view on the view. The problem in typical javascript MVC frameworks is that it is hard to tell the difference between the HTML view and the javascript view. Well in **Noa**, we have solved that. You'll typically have one of two situations: 
 
-1. You have your HTML written already and you just need to listen for events (buttons to be click, and text to be typed). 
+1. You have your HTML written already and you need to listen for events (buttons to be click, and text to be typed). 
 2. You have an empty HTML element you want to populate with some data from the server. And it may change over time. 
 
 In the case of #1 you can use the `Mediator`. In that case your **View** is your HTML, since it alone is responsible for displaying data. The `Mediator` will listen to changes on your HTML view like it is supposed to do. 
@@ -377,4 +377,4 @@ All that to say you can use your `Mediator` class in two ways.
 2. Where you have a view responsible for populating the template. In that case you'll pass a view class to the `Mediator`.
 
 ### JQuery
-JQuery is not required. However if you happen to be using JQuery (if the JQuery object is available), Just will use it to support browsers.  **Bottom line:** Add JQuery if you want.
+JQuery is not required. However if you happen to be using JQuery (if the JQuery object is available), Noa will use it to support browsers.  **Bottom line:** Add JQuery if you want.
