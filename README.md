@@ -1,4 +1,4 @@
-![Noa](https://raw.githubusercontent.com/jsz1/noa/master/noa.png)
+![Noa](https://raw.githubusercontent.com/noajs/noa/master/noa.png)
 
 Noa is a fast, small, thoughtfully written javascript MVC Framework. It's has 3 main goals.
 
