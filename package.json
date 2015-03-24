@@ -1,5 +1,5 @@
 {
-  "name": "Justice",
+  "name": "Noa",
   "description": "A MVC library to make things easier.",
   "version": "0.0.1",
   "keywords": [
@@ -10,22 +10,22 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/jsz1/just.git"
+    "url": "git://github.com/noajs/noa.git"
   },
   "maintainers": [
     {
       "name": "Jacob Schatz",
       "email": "jschatz1@gmail.com",
-      "web": "http://jsz1.github.io/just"
+      "web": "http://noajs.github.io/noa"
     }
   ],
   "bugs": {
-    "url": "https://github.com/jsz1/just/issues"
+    "url": "https://github.com/noajs/noa/issues"
   },
   "licenses": [
     {
       "name": "MIT",
-      "url": "https://raw.githubusercontent.com/jsz1/just/master/LICENSE.txt"
+      "url": "https://raw.githubusercontent.com/noajs/noa/master/LICENSE.txt"
     }
   ],
   "devDependencies": {
