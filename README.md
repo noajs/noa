@@ -12,8 +12,8 @@ Noa is a fast, small, thoughtfully written javascript MVC Framework. It's has 3 
 
 ## Documentation
 
-- [J](#j)
-- [J.extends`](#jextends)
+- [N](#j)
+- [N.extends`](#jextends)
 - ["Static" Methods](#static-methods)
 - [The Blueprint](#the-blueprint)
 - [Getting and Setting properties](#getting-and-setting-properties)
@@ -29,17 +29,17 @@ Noa is a fast, small, thoughtfully written javascript MVC Framework. It's has 3 
 # Noa
 Noa has **0** dependecies. IE >= 9 is supported.
 
-### J
-* Main `J` Object which contains static methods.
+### N
+* Main `N` Object which contains static methods.
 
-### J.extends`
+### N.extends`
 
 * Create inheritance easily: 
- `J.extends(Superclass, Class def (optional))`
+ `N.extends(Superclass, Class def (optional))`
  Example:
  
 ```javascript
-var TinyModel = J.extends(MiniModel, {
+var TinyModel = N.extends(MiniModel, {
 	bump : function() {
 		console.log("bumpping")
 	}, 
@@ -64,7 +64,7 @@ tm.bump();
 You can also add instance methods using the prototype method as you normally would.
 
 ```javascript
-var TinyModel = J.extends(MiniModel);
+var TinyModel = N.extends(MiniModel);
 
 TinyModel.prototype.init = function() {
 	console.log("Being created")
@@ -77,7 +77,7 @@ tm = TinyModel();
 You can create static methods by capitalizing the name of the method you create. 
 
 ```javascript
-var TinyModel = J.extends(MiniModel, {
+var TinyModel = N.extends(MiniModel, {
 	bump : function() {
 		console.log("bumpping")
 	}, 
@@ -95,13 +95,13 @@ tm = TinyModel();
 console.log(TinyModel.Plus(1,2));
 ```
 ### The Blueprint
-Everything in `J` extends from the `Blueprint` object.
+Everything in `N` extends from the `Blueprint` object.
 
 ### Getting and Setting properties
 You can initialize `Blueprint` with getters and setters. 
 
 ```javascript
-var blueprint = J.Blueprint({
+var blueprint = N.Blueprint({
 
 });
 ```
@@ -110,7 +110,7 @@ The `Blueprint` object/class gives everything that inherits it the ability to `g
 
 ```javascript
 //inherit from the Blueprint
-var SomeModel = J.extends(J.Blueprint);
+var SomeModel = N.extends(N.Blueprint);
 
 //create a new Some Model
 var sm = SomeModel();
@@ -120,17 +120,17 @@ sm.watcher = function(key,val) {
 	console.log("sm change","key:",key, "sm changed to:",val)
 }
 console.log(sm.get("name")); // undefined
-sm.set("name","John") // sm change key: name sm changed to: John
-console.log(sm.get("name")); // John
+sm.set("name","Harry") // sm change key: name sm changed to: Harry
+console.log(sm.get("name")); // Harry
 sm.set("name","Frank") // sm change key: name sm changed to: frank
 console.log(sm.get("name")); // Frank
 ```
 
 You can create read only properties by creating a property starting with an underscore. This will create the properties sans underscore as a getter only. 
 ```javascript
-var Blue = J.extends(J.Blueprint);
+var Blue = N.extends(N.Blueprint);
 var blue = Blue({
-	name : "John",
+	name : "Harry",
 	age : 25,
 	_i : 0
 });
@@ -139,30 +139,30 @@ console.log(
 	blue.get("name"),
 	blue.get("age"),
 	blue.get("i"));
-// John 25 0
+// Harry 25 0
 
-	blue.set("name","Jeff");
+	blue.set("name","Pop");
 	blue.set("age",30);
 	blue.set("i",20);
 	blue.set("_winner",false);
 	blue.set("winner",true);
-// Object {name: "Jeff", age: 30, i: 0, winner: false}
+// Object {name: "Pop", age: 30, i: 0, winner: false}
 
 console.log(
 	blue.get("name"),
 	blue.get("age"),
 	blue.get("i"),
 	blue.get("winner"));
-// Jeff 30 0 false
+// Pop 30 0 false
 ```
 
 #### `_super`
 When you inherit from `Blueprint` you will have a `_super` method avaiable to you. You can use it to call the parent class method and override your own. Here is a basic implementation.
 ```javascript
 var container = document.getElementsByClassName("container")[2];
-var View = J.extends(J.View, {
+var View = N.extends(N.View, {
 	render: function(data) {
-		this._super(J.View,"render",[data]);
+		this._super(N.View,"render",[data]);
 	}
 });
 ```
@@ -181,9 +181,9 @@ view.render({link:"google.com",
 			initial: "B",
 			full:"Benjamin"
 		},
-		last:"Johnston",
+		last:"Harryston",
 		quote:"and you know he was a good dog.",
-		nickname: "Jacky"
+		nickname: "Bruce"
 	}
 });
 ```
@@ -194,27 +194,27 @@ See more on template rendering below.
 You can use the `Mapper` class to get back a single instance of your model, or a new instance of your model. Make sure to create a single instance of a new `Mapper` with something like this: 
 
 ```javascript
-var mapper = J.Mapper();
+var mapper = N.Mapper();
 ```
 
 Then you add models to it with two methods `mapAModel` which will always return the same instance of a model. The mapper will instantiate it for you. You also have `mapModel` which will also instantiate a new model everytime you grab the model back. You can retrieve models with `getAModel` and `getModel`. 
 
 ```javascript
-var mapper = J.Mapper();
-var SomeModel = J.extends(J.Blueprint);
+var mapper = N.Mapper();
+var SomeModel = N.extends(N.Blueprint);
 mapper.mapAModel("some",SomeModel);
 var oneModel = mapper.getAModel("some"); //give it a name. Mapping "some" model.
 oneModel.set("name","john");
-console.log(oneModel.get("name")); // returns John
+console.log(oneModel.get("name")); // returns Harry
 var sameModel = mapper.getAModel("some"); // get that same instance on a new variable. 
-console.log(sameModel.get("name")) // returns John. We are dealing with the same instance as before.
+console.log(sameModel.get("name")) // returns Harry. We are dealing with the same instance as before.
 ```
 
 ### Data Binding
 You can setup to have data binding between different fields. Initialize a view with a `el` and setup your template and bindings. 
 
 ```javascript
-var view = J.View(document.getElementById("content"),{
+var view = N.View(document.getElementById("content"),{
 	bind : {
 		"name" : "keyup #name-input"
 	}
@@ -250,8 +250,8 @@ You can create dynamic templates in HTML. You can use your own templating engine
 You can tell Noa where to find your templates. 
 
 ```javascript
-J.registerApp( J.App() );
-var app = J.getApp();
+N.registerApp( N.App() );
+var app = N.getApp();
 app.config = {
 	root: "http://localhost:3000",
 	templates: "http://localhost:3000/templates"
@@ -260,7 +260,7 @@ app.config = {
 With this info in hand Noa will make a url request for your templates, but only when you render. You tell Noa which template on the page you want to grab. `*/templatename\*` refers to the template name and wrap the end with `*\templatename/*`. You can then grab the template like so
 ```javascript
 var container = document.getElementsByClassName("container")[2];
-var View = J.extends(J.View);
+var View = N.extends(N.View);
 var view = app.addView("list",View({
 	el: container,
 	template: "somefile.html#item", //#item refers to the template name.
@@ -271,7 +271,7 @@ Notice that our view can grab variables. You can wrap the variable with a single
 We also added a filter to our variable using the pipe `|`. There are a few included filters. You can add your own very easily. 
 
 ```javascript
-J.addFilter("camelCase",function(str){
+N.addFilter("camelCase",function(str){
 	return str.replace(/^([A-Z])|\s(\w)/g, function(match, p1, p2, offset) {
 	if (p2) return p2.toUpperCase();
 	return p1.toLowerCase();        
@@ -282,9 +282,9 @@ J.addFilter("camelCase",function(str){
 ### Views
 You can create a view and link it to a main element. When rendering you can render in context of a child of that view or for the whole view. There is a couple of typical MVC issues with `Views` that we have solved. See `Mediators` below. When the `render` method is called your view can load their own template by making a URL request to your templates directory (which you can configure on your `App.config` configuration. Any subsiquent calls to your `render` method will use a cached version of your templates. 
 ```javascript
-var view = J.View({
+var view = N.View({
 	el: document.getElementById("content"),
-	template : J.html("<div>{{name}}</div>");
+	template : N.html("<div>{{name}}</div>");
 });
 ```
 
@@ -293,14 +293,14 @@ var view = J.View({
 `Blueprint` and `Model` are similar but `Model` is meant for being the M in MVC. You can set all of it's properties at creation time. You can do this for the model and when creating the model through the `Mapper`.
 
 ```javascript
-var mapper = J.Mapper();
-var mainModel = mapper.mapAModel("mainModel",J.Model,{
+var mapper = N.Mapper();
+var mainModel = mapper.mapAModel("mainModel",N.Model,{
 	"height" : 50
 });
-mainModel.set("name","Jeffery")
-mainModel.set("name2","John")
+mainModel.set("name","Mildred")
+mainModel.set("name2","Harry")
 
-var otherModel = J.Model({
+var otherModel = N.Model({
 	color : "#9b59b6",
 	size : {
 		height : 50,
@@ -311,24 +311,24 @@ var otherModel = J.Model({
 Models also have a `toJSON()` method and `toObject()` method. 
 
 ```javascript
-var otherModel = J.Model({
+var otherModel = N.Model({
 	color : "#9b59b6",
 	size : {
 		height : 50,
 		width : 25
 	}
 });
-J.l(otherModel.toObject());
-J.l(otherModel.toJSON());
+N.l(otherModel.toObject());
+N.l(otherModel.toJSON());
 ```
-We also have a convenience method you'll notice from the last example `J.l` which pipes directly to `console.log`. It's easier to type. 
+We also have a convenience method you'll notice from the last example `N.l` which pipes directly to `console.log`. It's easier to type. 
 
 ### Events
 We have cross browser events available and you would (but won't have to see `App` below) create 1 event class/object for app wide event triggering and listening. 
 
 ```javascript
 // New instance of Events class.
-var events = J.Events();
+var events = N.Events();
 
 // Subscribe
 events.add(document.body,'customEvent',function() {
@@ -342,7 +342,7 @@ events.trigger(document.body,'customEvent');
 You shouldn't need to create the `Event` on your own. It is included with your app object as well as other `App` nessesities. Here is a refactored version of the previous example using the App object for event delegation.
 
 ```javascript
-var App = J.App();
+var App = N.App();
 
 // Subscribe
 App.events.add(document.body,'customEvent',function() {
@@ -353,8 +353,8 @@ App.events.trigger(document.body,'customEvent');
 ```
 You can set config values on your `App`.
 ```javascript
-J.registerApp( J.App() );
-var app = J.getApp();
+N.registerApp( N.App() );
+var app = N.getApp();
 app.config = {
 	root: "http://localhost:3000",
 	templates: "http://localhost:3000/templates"
