@@ -37,7 +37,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "npm test"
+    "test": "grunt test"
   },
   "author": "Jacob Schatz <jschatz1@gmail.com> (https://github.com/jsz1/)",
   "license": "MIT"
