@@ -1,6 +1,6 @@
 ( function() {
 	var obj = {};
-	module( "J", {
+	module( "N", {
 		setup: function() {
 			obj = { a:1, b:2 };
 		}
