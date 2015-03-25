@@ -2,8 +2,8 @@
 	var app;
 	module( "App", {
 		setup: function() {
-			J.registerApp( J.App() );
-			app = J.getApp();
+			N.registerApp( N.App() );
+			app = N.getApp();
 		}
 	} );
 

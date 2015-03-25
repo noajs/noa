@@ -3,7 +3,7 @@
 
 	module( "Event", {
 		setup: function() {
-			events = J.Events();
+			events = N.Events();
 		}
 	} );
 

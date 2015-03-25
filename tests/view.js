@@ -2,33 +2,33 @@
 	var app;
 	module( "View", {
 		setup: function() {
-			J.registerApp( J.App() );
-			app = J.getApp();
+			N.registerApp( N.App() );
+			app = N.getApp();
 		}
 	} );
 
 	QUnit.test( "App.addView", function( assert ) {
-		var view = app.addView( "content", J.View(
+		var view = app.addView( "content", N.View(
 			document.getElementById( "content" )
 		) );
 		assert.strictEqual( app.getView( "content" ), view );
 	} );
 
 	QUnit.test( "App.getView", function( assert ) {
-		var view = app.addView( "content", J.View(
+		var view = app.addView( "content", N.View(
 			document.getElementById( "content" )
 		) );
 		assert.strictEqual( app.getView( "content" ), view );
 	} );
 
 	QUnit.test( "App.getAllViews", function( assert ) {
-		var headerView = app.addView( "header", J.View(
+		var headerView = app.addView( "header", N.View(
 			document.getElementById( "header" )
 		) ),
-			innerView = app.addView( "inner", J.View(
+			innerView = app.addView( "inner", N.View(
 			document.getElementById( "inner" )
 		) ),
-			footerView = app.addView( "footer", J.View(
+			footerView = app.addView( "footer", N.View(
 			document.getElementById( "footer" )
 		) );
 		assert.deepEqual( app.getAllViews(), {

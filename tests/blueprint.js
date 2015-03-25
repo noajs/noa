@@ -3,7 +3,7 @@
 		activeBlueprint;
 	module( "Blueprint", {
 		setup: function() {
-			ActiveBlueprint = J.extends( J.Blueprint, {
+			ActiveBlueprint = N.extends( N.Blueprint, {
 				go: function() {
 					return "GO";
 				},

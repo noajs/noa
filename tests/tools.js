@@ -2,8 +2,8 @@
 	var app;
 	module( "Tools", {
 		setup: function() {
-			J.registerApp( J.App() );
-			app = J.getApp();
+			N.registerApp( N.App() );
+			app = N.getApp();
 		}
 	} );
 
@@ -16,16 +16,16 @@
 		  return function() {};
 		} )(),
 			F = new Function();
-		assert.equal( J.isFunction( A ), true );
-		assert.equal( J.isFunction( B ), true );
-		assert.equal( J.isFunction( C ), true );
-		assert.equal( J.isFunction( D ), true );
-		assert.equal( J.isFunction( E ), true );
-		assert.equal( J.isFunction( F ), true );
+		assert.equal( N.isFunction( A ), true );
+		assert.equal( N.isFunction( B ), true );
+		assert.equal( N.isFunction( C ), true );
+		assert.equal( N.isFunction( D ), true );
+		assert.equal( N.isFunction( E ), true );
+		assert.equal( N.isFunction( F ), true );
 	} );
 
 	QUnit.test( "randString", function( assert ) {
-		var s1 = J.randString( 5 );
+		var s1 = N.randString( 5 );
 		assert.equal( s1.length, 5 );
 		assert.ok( s1.match( /\w{5}/ ) );
 	} );
@@ -42,16 +42,16 @@
 			car1 = { manyCars: { a: "Saab", "b": "Jeep" }, 7: "Mazda" },
 			car2 = { myCar: "Saturn", getCar: CarTypes( "Honda" ), special: Sales };
 
-		assert.ok( J.isObjectLiteral( car1 ) );
-		assert.ok( J.isObjectLiteral( car2 ) );
+		assert.ok( N.isObjectLiteral( car1 ) );
+		assert.ok( N.isObjectLiteral( car2 ) );
 	} );
 
 	QUnit.test( "isString", function( assert ) {
 		var a = "Hello world!",
 			b = "Hi there it's me";
-		assert.ok( J.isString( a ) );
-		assert.ok( J.isString( b ) );
-		assert.ok( J.isString( 5 + "" ) );
+		assert.ok( N.isString( a ) );
+		assert.ok( N.isString( b ) );
+		assert.ok( N.isString( 5 + "" ) );
 	} );
 
 	QUnit.test( "isEmpty", function( assert ) {
@@ -59,24 +59,24 @@
 			b,
 			c = {},
 			d = [];
-		assert.ok( J.isEmpty( a ) );
-		assert.ok( J.isEmpty( b ) );
-		assert.ok( J.isEmpty( c ) );
-		assert.ok( J.isEmpty( d ) );
+		assert.ok( N.isEmpty( a ) );
+		assert.ok( N.isEmpty( b ) );
+		assert.ok( N.isEmpty( c ) );
+		assert.ok( N.isEmpty( d ) );
 	} );
 
 	QUnit.test( "makeError", function( assert ) {
-		J._makeError("testerror", "This is a test.");
+		N._makeError("testerror", "This is a test.");
 		assert.ok(true);
 	} );
 
 	// QUnit.test( "urlJSON", function( assert ) {
-	// 	var urlObj = J.url( "http://echo.jsontest.com/status/success/fortune/howru", J.types.JSON ),
+	// 	var urlObj = N.url( "http://echo.jsontest.com/status/success/fortune/howru", N.types.JSON ),
 	// 		done = assert.async();
 	// 	urlObj.get( function( data ) {
 	// 		assert.deepEqual( data, {
-	// 			status: J.types.OK,
-	// 			statuz: J.types.HAPPY,
+	// 			status: N.types.OK,
+	// 			statuz: N.types.HAPPY,
 	// 			statusCode: 200,
 	// 			data: {
 	// 				status: "success",
@@ -88,12 +88,12 @@
 	// } );
 
 	// QUnit.test( "urlTEXT", function( assert ) {
-	// 	var urlObj = J.url( "https://raw.githubusercontent.com/google/fonts/master/AUTHORS", J.types.TEXT ),
+	// 	var urlObj = N.url( "https://raw.githubusercontent.com/google/fonts/master/AUTHORS", N.types.TEXT ),
 	// 		done = assert.async();
 	// 	urlObj.get( function( data ) {
 	// 		assert.deepEqual( data, {
-	// 			status: J.types.OK,
-	// 			statuz: J.types.HAPPY,
+	// 			status: N.types.OK,
+	// 			statuz: N.types.HAPPY,
 	// 			statusCode: 200,
 	// 			data: "# This is the official list of authors for copyright purposes.\n"+
 	// 				"# This file is distinct from the CONTRIBUTORS files.\n"+

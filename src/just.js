@@ -13,10 +13,10 @@
         root.returnExports = factory();
   }
 }( this, function() {
-    var J = makeClass();
-    J._i = 0;
+    var N = makeClass();
+    N._i = 0;
 
-    J.types = {
+    N.types = {
         "URL": "URL",
         "HTML": "HTML",
         "SAD": ":-(",
@@ -27,32 +27,32 @@
         "TEXT" : "TEXT" 
     };
 
-    J.EventTypes = {
+    N.EventTypes = {
         "View.TEMPLATE_PARSED" : "View.TEMPLATE_PARSED",
         "URL.COMPLETE" : "URL.COMPLETE",
         "Mediator.ADDED" : "Mediator.ADDED"
     };
 
-    J._App = null;
+    N._App = null;
 
-    J.registerApp = function( App ) {
-        J._App = App;
+    N.registerApp = function( App ) {
+        N._App = App;
     };
 
-    J.getApp = function() {
-        if ( J._App ) {
-            return J._App;
+    N.getApp = function() {
+        if ( N._App ) {
+            return N._App;
         } else {
-            throw J._makeError( "register", "Register your App with " +
-                "J.registerApp( YourApp )", null );
+            throw N._makeError( "register", "Register your App with " +
+                "N.registerApp( YourApp )", null );
         }
     };
 
-    J.isJQueryAvailable = function() {
+    N.isJQueryAvailable = function() {
         return typeof jQuery !== "undefined";
     };
 
-    J._makeError = function( id, msg, err ) {
+    N._makeError = function( id, msg, err ) {
         var e = new Error( msg + "\nhttps://github.com/jsz1/just/blob/master/README.md#" + id );
         e.justType = id;
         if ( err ) {
@@ -61,43 +61,43 @@
         return e;
     };
 
-    J.l = function() {
+    N.l = function() {
         
     };
 
-    J.url = function( url,dataType ) {
+    N.url = function( url,dataType ) {
         return {
-            type: J.types.URL,
+            type: N.types.URL,
             get: function( callback ) {
                 var request = new XMLHttpRequest(),
                     response;
                 request.open( "GET", url, true );
                 request.onload = function() {
                     if(typeof dataType === "undefined") {
-                        dataType = J.types.TEXT;
+                        dataType = N.types.TEXT;
                     }
                     if ( request.status >= 200 && request.status < 400 ) {
                         // Success!
-                        if( dataType === J.types.JSON ) {
+                        if( dataType === N.types.JSON ) {
                             response = JSON.parse(request.responseText);
-                        } else if ( dataType === J.types.TEXT ) {
+                        } else if ( dataType === N.types.TEXT ) {
                             response = request.responseText;
                         }
                         callback( {
-                            status: J.types.OK,
-                            statuz: J.types.HAPPY,
+                            status: N.types.OK,
+                            statuz: N.types.HAPPY,
                             statusCode: request.status,
                             data: response
                         } );
                     } else {
-                        if( dataType === J.types.JSON ) {
+                        if( dataType === N.types.JSON ) {
                             response = JSON.parse({ error: request.responseText });
-                        } else if ( dataType === J.types.TEXT ) {
+                        } else if ( dataType === N.types.TEXT ) {
                             response = request.responseText;
                         }
                         callback( {
-                            status: J.types.NO_GOOD,
-                            statuz: J.types.SAD,
+                            status: N.types.NO_GOOD,
+                            statuz: N.types.SAD,
                             statusCode: request.status,
                             data: response
                         } );
@@ -105,8 +105,8 @@
                 };
                 request.onerror = function() {
                     callback( {
-                        status: J.types.NO_GOOD,
-                        statuz: J.types.SAD,
+                        status: N.types.NO_GOOD,
+                        statuz: N.types.SAD,
                         statusCode: request.status,
                         data: request.responseText
                     } );
@@ -116,18 +116,28 @@
         };
     };
 
-    J.isFunction = function( functionToCheck ) {
+    N.clone = function(obj) {
+       var target = {};
+       for (var i in obj) {
+        if (obj.hasOwnProperty(i)) {
+         target[i] = obj[i];
+        }
+       }
+       return target;
+    }
+
+    N.isFunction = function( functionToCheck ) {
         var getType = {};
         return functionToCheck && getType.toString.call( functionToCheck ) === "[object Function]";
     };
 
-    J.html = function( html ) {
+    N.html = function( html ) {
         return {
             type: "HTML",
             get: function( callback ) {
                 if ( typeof callback === "undefined" ) {
                     return html;
-                } else if ( J.isFunction( callback ) ) {
+                } else if ( N.isFunction( callback ) ) {
                     return callback( html );
                 } else {
                     return html;
@@ -136,8 +146,8 @@
         };
     };
 
-    J.randString = function( n ) {
-        var text = "J",
+    N.randString = function( n ) {
+        var text = "N",
             possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
             i = 1;
         for ( i = 1; i < n; i++ ) {
@@ -146,7 +156,7 @@
         return text;
     };
 
-    J.Filter = {
+    N.Filter = {
         titleize: function(str) {
             return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
         },
@@ -155,14 +165,14 @@
         }
     };
 
-    J.addFilter = function(name,filter){
-        J.Filter[name] = filter;
+    N.addFilter = function(name,filter){
+        N.Filter[name] = filter;
     };
 
-    J.template = function( template, data, typeOfTemplate, callback ) {
+    N.template = function( template, data, typeOfTemplate, callback ) {
         var templateNameSplit = template.split("#"),
-            appTemplatesPath = J.getApp().config.templates;
-        if ( typeof typeOfTemplate === "undefined" || typeOfTemplate === J.types.URL ) {
+            appTemplatesPath = N.getApp().config.templates;
+        if ( typeof typeOfTemplate === "undefined" || typeOfTemplate === N.types.URL ) {
             // if they use trailing slashes then use trailing slashes.
             if(appTemplatesPath[appTemplatesPath.length-1] !== "/"){
                 appTemplatesPath += "/" + templateNameSplit[0];
@@ -170,15 +180,15 @@
                 appTemplatesPath += templateNameSplit[0] + "/";
             }
 
-            J.url(appTemplatesPath).get(function(response){
-                callback(J.compile(response.data, templateNameSplit[1], data));
+            N.url(appTemplatesPath).get(function(response){
+                callback(N.compile(response.data, templateNameSplit[1], data));
             });
-        } else if( typeOfTemplate === J.types.HTML ) {
-            callback(J.compile(this.template, templateNameSplit[1], data));
+        } else if( typeOfTemplate === N.types.HTML ) {
+            callback(N.compile(this.template, templateNameSplit[1], data));
         }
     };
 
-    J.bindTemplate = function(mediator, el) {
+    N.bindTemplate = function(mediator, el) {
         var matchers = {
             mediatorEvents: /on(\S)*\="{mediator\.([\S\s]+?)}"/g,
             mediatorInBracketsAndQuotes: /\"{([\S\s]+?)}\"/g
@@ -197,7 +207,7 @@
                 html = html.replace(resultSplit[0]+"=","");
                 while(( bracketExec = matchers.mediatorInBracketsAndQuotes.exec(resultSplit[1])) !== null){
                     methodToCall = bracketExec[1].replace("mediator.","");
-                    var randId = J.randString(9);
+                    var randId = N.randString(9);
                     html = html.replace(bracketExec[0],"data-just-event=\"" + randId + "\"");
                     randIds.push({
                         id: randId,
@@ -211,7 +221,7 @@
         el.innerHTML = html;
         
         for (var j = 0; j < randIds.length; j++) {
-            if(J.isJQueryAvailable()){
+            if(N.isJQueryAvailable()){
                 $(el).on("click","[data-just-event='" + randIds[j].id + "']", 
                     mediator._listeners[randIds[j].methodToCall]);
             } else {
@@ -221,7 +231,7 @@
         }
     };
 
-    J.compile = function( componentSource, templateName, obj ) {
+    N.compile = function( componentSource, templateName, obj ) {
         var matchers = {
             componentStart: /\*\/([\S\s]+?)\\\*/g,
             componentEnd: /\*\\([\S\s]+?)\/\*/g,
@@ -262,8 +272,8 @@
                     propAndFilter = prop.split("|");
                     prop = propAndFilter[0];
                     filter = propAndFilter[1];
-                    if(J.Filter.hasOwnProperty(filter)){
-                        filter = J.Filter[filter];
+                    if(N.Filter.hasOwnProperty(filter)){
+                        filter = N.Filter[filter];
                     } else {
                         filter = null;
                     }
@@ -314,7 +324,7 @@
         return toParse;
     };
 
-    J.extends = function( SuperClass, definitionObj ) {
+    N.extends = function( SuperClass, definitionObj ) {
         var SubClass = makeClass(),
             prop;
         SubClass.prototype = Object.create( SuperClass.prototype );
@@ -339,7 +349,7 @@
         return SubClass;
     };
 
-    J.isObjectLiteral = function( _obj ) {
+    N.isObjectLiteral = function( _obj ) {
         var _test  = _obj;
         return ( typeof _obj !== "object" || _obj === null ?
         false :
@@ -358,66 +368,66 @@
         );
     };
 
-    J.isString = function( obj ) {
+    N.isString = function( obj ) {
         return typeof obj === "string";
     };
-    J._IEVersion = null;
-    J.IEVersion = function() {
-        if(J._IEVersion){
-            return J._IEVersion;
+    N._IEVersion = null;
+    N.IEVersion = function() {
+        if(N._IEVersion){
+            return N._IEVersion;
         }
         if(document.all && !window.XMLHttpRequest){
             // IE6  or older
-            return J._IEVersion = "<=6";
+            return N._IEVersion = "<=6";
         } else if (document.all && !document.querySelector){
             // IE7  or older
-            return J._IEVersion = "<=7";
+            return N._IEVersion = "<=7";
         } else if(document.all && !document.addEventListener){
             // IE8  or older
-            return J._IEVersion = "<=8";
+            return N._IEVersion = "<=8";
         } else if(document.all && !window.atob){
             // IE9  or older
-            return J._IEVersion = "<=9";
+            return N._IEVersion = "<=9";
         } else if(document.all) {
             // 10 or older
-            return J._IEVersion = "<=10";
+            return N._IEVersion = "<=10";
         }
     };
 
-    J.isIE = function(userAgent) {
+    N.isIE = function(userAgent) {
         // Works for the IE's that we have to worry about.
         userAgent = userAgent || navigator.userAgent;
         return userAgent.indexOf("MSIE ") > -1 || userAgent.indexOf("Trident/") > -1;
     };
 
-    J.IEAtLeast = function(num) {
+    N.IEAtLeast = function(num) {
         // Why would anyone ever need at least version 6 of IE? I have no idea.
         if(num === 6){
-            if(J.IEVersion() === "<=6" || J.IEVersion() === "<=7" || J.IEVersion() === "<=8" || J.IEVersion() === "<=9" || J.IEVersion() === "<=10"){
+            if(N.IEVersion() === "<=6" || N.IEVersion() === "<=7" || N.IEVersion() === "<=8" || N.IEVersion() === "<=9" || N.IEVersion() === "<=10"){
                 return true;
             }
         }
         if(num === 7){
-            if(J.IEVersion() === "<=7" || J.IEVersion() === "<=8" || J.IEVersion() === "<=9" || J.IEVersion() === "<=10"){
+            if(N.IEVersion() === "<=7" || N.IEVersion() === "<=8" || N.IEVersion() === "<=9" || N.IEVersion() === "<=10"){
                 return true;
             }
         } else if(num === 8){
-            if(J.IEVersion() === "<=8" || J.IEVersion() === "<=9" || J.IEVersion() === "<=10"){
+            if(N.IEVersion() === "<=8" || N.IEVersion() === "<=9" || N.IEVersion() === "<=10"){
                 return true;
             }    
         } else if(num === 9){
-            if(J.IEVersion() === "<=9" || J.IEVersion() === "<=10"){
+            if(N.IEVersion() === "<=9" || N.IEVersion() === "<=10"){
                 return true;
             }    
         } else if(num === 10) {
-            if(J.IEVersion() === "<=10"){
+            if(N.IEVersion() === "<=10"){
                 return true;
             }
         }
         return false;
     };
 
-    J.isEmpty = function( obj ) {
+    N.isEmpty = function( obj ) {
 
         // null and undefined are "empty"
         if ( obj === null ) {
@@ -449,12 +459,12 @@
         return true;
     };
 
-    J.Blueprint = makeClass();
+    N.Blueprint = makeClass();
 
-    J.Blueprint.prototype.watcher = null;
+    N.Blueprint.prototype.watcher = null;
 
-    J.Blueprint.prototype.init = function( properties ) {
-        this.id = ++J._i;
+    N.Blueprint.prototype.init = function( properties ) {
+        this.id = ++N._i;
         this._properties = {};
         for ( var s in properties ) {
             if ( s[0] === "_" ) {
@@ -470,18 +480,18 @@
         }
     };
 
-    J.Blueprint.prototype._super = function(SuperClass,toCall,params){
+    N.Blueprint.prototype._super = function(SuperClass,toCall,params){
         SuperClass.prototype[toCall].apply(this,params);
     };
 
-    J.Blueprint.prototype.get = function( arg ) {
+    N.Blueprint.prototype.get = function( arg ) {
         return this._properties[arg];
     };
 
-    J.Blueprint.prototype.set = function( key, val ) {
+    N.Blueprint.prototype.set = function( key, val ) {
         var oldVal = this._properties[key];
         if ( this._properties[key] !== val ) {
-            if ( J.isString( key ) && key[0] === "_" ) {
+            if ( N.isString( key ) && key[0] === "_" ) {
                 Object.defineProperty( this._properties, key.substring( 1 ), {
                     value: val,
                     writable: false,
@@ -502,9 +512,9 @@
         }
     };
 
-    J.App = makeClass();
-    J.App.prototype.init = function() {
-        this.events = J.Events();
+    N.App = makeClass();
+    N.App.prototype.init = function() {
+        this.events = N.Events();
         this.views = {};
         this.mediators = {};
         this.config = {
@@ -514,15 +524,15 @@
         this.templateCache = {};
     };
 
-    J.App.prototype.addView = function( name, view ) {
+    N.App.prototype.addView = function( name, view ) {
         this.views[name] = view;
         return view;
     };
 
-    J.App.prototype.addMediator = function( view, mediator ) {
+    N.App.prototype.addMediator = function( view, mediator ) {
         this.mediators[view] = mediator;
         this.views[view].mediator = mediator;
-        J._App.events.trigger(this.views[view].el, J.EventTypes["Mediator.ADDED"],
+        N._App.events.trigger(this.views[view].el, N.EventTypes["Mediator.ADDED"],
         {
                 mediator: mediator,
                 view: view
@@ -530,7 +540,7 @@
         return mediator;
     };
 
-    J.App.prototype.config = function( configObj ) {
+    N.App.prototype.config = function( configObj ) {
         if(configObj !== "undefined"){
             this.config = configObj;    
         } else {
@@ -538,35 +548,35 @@
         }  
     };
 
-    J.App.prototype.getView = function( name ) {
+    N.App.prototype.getView = function( name ) {
         return this.views[name];
     };
 
-    J.App.prototype.getAllViews = function() {
+    N.App.prototype.getAllViews = function() {
         return this.views;
     };
 
-    J.App.prototype.removeView = function( name ) {
+    N.App.prototype.removeView = function( name ) {
         delete this.views[name];
         return name;
     };
 
-    J.Events = makeClass();
-    J.Events.prototype.init = function() {
+    N.Events = makeClass();
+    N.Events.prototype.init = function() {
 
     };
 
     // http://stackoverflow.com/questions/5342917
-    J.Events.prototype.trigger = function( el, eventName, data ) {
+    N.Events.prototype.trigger = function( el, eventName, data ) {
         var event;
         if ( window.document.createEvent ) {
 
             if(typeof data !== "undefined") {
-                if(J.isJQueryAvailable()){
+                if(N.isJQueryAvailable()){
                     $(el).trigger(eventName, data);
                     return $(el);
                 }
-                if( J.IEAtLeast(9) || J.isIE() ){
+                if( N.IEAtLeast(9) || N.isIE() ){
                     event = window.document.createEvent(eventName);
                     event.initCustomEvent(eventName, false, false, data);
                 } else {
@@ -577,7 +587,7 @@
                     return el;
                 }
             } else {
-                if(J.isJQueryAvailable()){
+                if(N.isJQueryAvailable()){
                     $(el).trigger(eventName);
                     return $(el);
                 }
@@ -601,8 +611,8 @@
         return el;
     };
 
-    J.Events.prototype.add = function( el, type, handler ) {
-        if(J.isJQueryAvailable()){
+    N.Events.prototype.add = function( el, type, handler ) {
+        if(N.isJQueryAvailable()){
             $(el).on(type, handler);
             return $(el);
         }
@@ -610,7 +620,7 @@
             el.addEventListener( type, handler, false );
             return el;
         }else if ( el.attachEvent ) {// IE < 9
-            if(J.isJQueryAvailable()){
+            if(N.isJQueryAvailable()){
                 $(el).on(type, handler);
                 return $(el);
             }
@@ -621,11 +631,11 @@
         return el;
     };
 
-    J.Events.prototype.remove = function( el, type, handler ) {
+    N.Events.prototype.remove = function( el, type, handler ) {
         if ( el.removeEventListener ) {
             el.removeEventListener( type, handler, false );
         }else if ( el.detachEvent ) {// IE < 9
-            if(J.isJQueryAvailable()){
+            if(N.isJQueryAvailable()){
                 $(el).off(type, handler);
                 return;
             } else {
@@ -639,25 +649,25 @@
     };
 
     // Model
-    J.Model = makeClass();
-    J.Model.prototype = Object.create( J.Blueprint.prototype );
+    N.Model = makeClass();
+    N.Model.prototype = Object.create( N.Blueprint.prototype );
 
-    J.Model.prototype.init = function( properties ) {
-        J.Blueprint.prototype.init.call( this, properties );
+    N.Model.prototype.init = function( properties ) {
+        N.Blueprint.prototype.init.call( this, properties );
     };
 
-    J.Model.prototype.toJSON = function() {
+    N.Model.prototype.toJSON = function() {
         return JSON.stringify( this._properties );
     };
 
-    J.Model.prototype.toObject = function() {
+    N.Model.prototype.toObject = function() {
         return this._properties;
     };
 
-    J.View = makeClass();
-    J.View.prototype = Object.create( J.Blueprint.prototype );
-    J.View.prototype.init = function( properties ) {
-        J.Blueprint.prototype.init.call( this );
+    N.View = makeClass();
+    N.View.prototype = Object.create( N.Blueprint.prototype );
+    N.View.prototype.init = function( properties ) {
+        N.Blueprint.prototype.init.call( this );
         if ( typeof properties !== "undefined" ) {
             for ( var s in properties ) {
                 if ( s === "template" ) {
@@ -671,7 +681,7 @@
         }
     };
 
-    J.View.prototype.initBindables = function() {
+    N.View.prototype.initBindables = function() {
         var newSelector,
             newId,
             bindablesAttributes,
@@ -679,7 +689,7 @@
         this._bindableMappings = [];
         bindablesAttributes = this.el.querySelectorAll( "[data-j-bindable]" );
         for ( i = 0; i < bindablesAttributes.length; i++ ) {
-            newId = J.randString( 5 );
+            newId = N.randString( 5 );
             bindablesAttributes[i].setAttribute( "data-j-bound-id", newId );
             newSelector = bindablesAttributes[i].tagName + "[data-j-bound-id='" + newId + "']";
             this._bindableMappings.push( {
@@ -690,7 +700,7 @@
         }
     };
 
-    J.View.prototype.initBindableListeners = function() {
+    N.View.prototype.initBindableListeners = function() {
         var actionTarget,
             action,
             target,
@@ -711,7 +721,7 @@
         }
     };
 
-    J.View.prototype.template = function( templateObj ) {
+    N.View.prototype.template = function( templateObj ) {
         if ( typeof templateObj !== "undefined" ) {
             this.template = templateObj;
         } else {
@@ -719,21 +729,21 @@
         }
     };
 
-    J.View.prototype.render = function( data, type ) {
+    N.View.prototype.render = function( data, type ) {
         var renderedHTML;
         if(!this.template){
-            throw J._makeError( "template_missing", "View is missing a template", null );
+            throw N._makeError( "template_missing", "View is missing a template", null );
         }
-        J.template(this.template, data, type, function(rendered){
+        N.template(this.template, data, type, function(rendered){
             renderedHTML = rendered;
-            J._App.events.trigger(this.el, "View.TEMPLATE_PARSED",{
+            N._App.events.trigger(this.el, "View.TEMPLATE_PARSED",{
                 data: renderedHTML
             });
             
             this.el.innerHTML = renderedHTML;
             
             // bind the events on this element to this mediator
-            J.bindTemplate(this.mediator, this.el);
+            N.bindTemplate(this.mediator, this.el);
         }.bind(this));
             // finished = function() {
             //     if ( this.bindables ) {
@@ -743,9 +753,9 @@
             // };
     };
 
-    J.Mediator = makeClass();
-    J.Mediator.prototype = Object.create( J.Blueprint.prototype );
-    J.Mediator.prototype.init = function( properties ) {
+    N.Mediator = makeClass();
+    N.Mediator.prototype = Object.create( N.Blueprint.prototype );
+    N.Mediator.prototype.init = function( properties ) {
         this._listeners = {};
         this._events = {};
         if ( typeof properties !== "undefined" ) {
@@ -759,15 +769,15 @@
                     this._listeners = properties[s];
                 }
             }
-            if ( !J.isEmpty( this._events ) && !J.isEmpty( this._listeners ) ) {
+            if ( !N.isEmpty( this._events ) && !N.isEmpty( this._listeners ) ) {
                 this.events.call( this );
             }
 
-            if( !J.isEmpty( this._listeners ) ) {}
+            if( !N.isEmpty( this._listeners ) ) {}
         }
     };
 
-    J.Mediator.prototype.events = function() {
+    N.Mediator.prototype.events = function() {
         var actionTarget,
             action,
             target,
@@ -781,14 +791,14 @@
                     actionTarget = s;
                     action = actionTarget.substring( 0, actionTarget.indexOf( " " ) );
                     target = actionTarget.substring( actionTarget.indexOf( " " ) + 1 );
-                    if(J.isJQueryAvailable()){
+                    if(N.isJQueryAvailable()){
                         query = $(target);
                     } else {
                         query = this.view.el.querySelectorAll( target );
                     }
 
                     if ( query ) {
-                        if(J.isJQueryAvailable()){
+                        if(N.isJQueryAvailable()){
                             query.on(action, this._listeners[this._events[s]]);
                         } else {
                             for (var i = 0; i < query.length; i++) {
@@ -804,12 +814,12 @@
         }
     };
 
-    J.Mapper = makeClass();
-    J.Mapper.prototype = Object.create( J.Blueprint );
-    J.Mapper.prototype.viewMap = {};
-    J.Mapper.prototype.singleModelMap = {};
-    J.Mapper.prototype.modelMap = {};
-    J.Mapper.prototype.mapView = function( name, view, mediator ) {
+    N.Mapper = makeClass();
+    N.Mapper.prototype = Object.create( N.Blueprint );
+    N.Mapper.prototype.viewMap = {};
+    N.Mapper.prototype.singleModelMap = {};
+    N.Mapper.prototype.modelMap = {};
+    N.Mapper.prototype.mapView = function( name, view, mediator ) {
         this.viewMap[name] = {
             "view": view,
             "mediator": mediator
@@ -818,28 +828,28 @@
         return this.viewMap[name];
     };
 
-    J.Mapper.prototype.mapAModel = function( name, Model, properties ) {
+    N.Mapper.prototype.mapAModel = function( name, Model, properties ) {
         var p = typeof properties === undefined ? {} : properties;
         this.singleModelMap[name] = Model( p );
         return this.singleModelMap[name];
     };
 
-    J.Mapper.prototype.getAModel = function( name ) {
+    N.Mapper.prototype.getAModel = function( name ) {
         return this.singleModelMap[name];
     };
 
-    J.Mapper.prototype.mapModel = function( name, Model ) {
+    N.Mapper.prototype.mapModel = function( name, Model ) {
         this.modelMap[name] = Model;
         return this.modelMap[name];
     };
 
-    J.Mapper.prototype.getModel = function( name, properties ) {
+    N.Mapper.prototype.getModel = function( name, properties ) {
         var p = typeof properties === undefined ? {} : properties;
         return this.modelMap[name]( p );
     };
 
-    J.Effects = {};
-    J.Effects.slideDown = function (element, duration, finalheight, callback) {
+    N.Effects = {};
+    N.Effects.slideDown = function (element, duration, finalheight, callback) {
         var s = element.style;
         s.height = "0px";
 
@@ -873,7 +883,7 @@
         };
     }
 
-    window.J = J;
+    window.N = N;
 
-    return J;
+    return N;
 } ) );
