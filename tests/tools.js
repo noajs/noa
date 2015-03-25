@@ -30,15 +30,6 @@
 		assert.ok( s1.match( /\w{5}/ ) );
 	} );
 
-	QUnit.test( "parse", function( assert ) {
-		var s1 = "Hi there my name is {{name}}",
-			s2 = "Hey there our names are {{name1}} and {{name2}}",
-			obj1 = { name: "John" },
-			obj2 = { name1: "Jeff", name2: "Mike" };
-		assert.strictEqual( J.parse( s1, obj1 ), "Hi there my name is John" );
-		assert.strictEqual( J.parse( s2, obj2 ), "Hey there our names are Jeff and Mike" );
-	} );
-
 	QUnit.test( "isObjectLiteral", function( assert ) {
 		function CarTypes( name ) {
 			if ( name === "Honda" ) {

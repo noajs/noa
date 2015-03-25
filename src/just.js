@@ -1,4 +1,4 @@
-
+/*jslint browser:true */
 ( function( root, factory ) {
     if ( typeof define === "function" && define.amd ) {
         // AMD. Register as an anonymous module.
@@ -564,7 +564,7 @@
             if(typeof data !== "undefined") {
                 if(J.isJQueryAvailable()){
                     $(el).trigger(eventName, data);
-                    return;
+                    return $(el);
                 }
                 if( J.IEAtLeast(9) || J.isIE() ){
                     event = window.document.createEvent(eventName);
@@ -574,11 +574,12 @@
                         detail: data 
                     });
                     el.dispatchEvent(event);
+                    return el;
                 }
             } else {
                 if(J.isJQueryAvailable()){
                     $(el).trigger(eventName);
-                    return;
+                    return $(el);
                 }
                 event = document.createEvent( "HTMLEvents" );
                 event.initEvent( eventName, true, true );
@@ -603,14 +604,15 @@
     J.Events.prototype.add = function( el, type, handler ) {
         if(J.isJQueryAvailable()){
             $(el).on(type, handler);
-            return;
+            return $(el);
         }
         if ( el.addEventListener ) {
             el.addEventListener( type, handler, false );
+            return el;
         }else if ( el.attachEvent ) {// IE < 9
             if(J.isJQueryAvailable()){
                 $(el).on(type, handler);
-                return;
+                return $(el);
             }
             el.attachEvent( "on" + type, handler );
         }else {
