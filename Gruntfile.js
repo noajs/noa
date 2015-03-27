@@ -17,6 +17,15 @@ module.exports = function( grunt ) {
 
 	grunt.initConfig( {
 
+		blanket_qunit: {
+			all: {
+				options: {
+					urls: ['tests/index.html?coverage=true&gruntReport'],
+					threshold: 20
+				}
+			}
+		},
+
 		qunit: {
             files: ["tests/index.html"]
         },
@@ -78,8 +87,9 @@ module.exports = function( grunt ) {
 	grunt.loadNpmTasks("grunt-contrib-watch");
 	grunt.loadNpmTasks("grunt-contrib-uglify");
 	grunt.loadNpmTasks("grunt-contrib-qunit");
+	grunt.loadNpmTasks('grunt-blanket-qunit');
 	grunt.registerTask( "lint", [ "jshint", "jscs" ] );
-	grunt.registerTask( "test", [ "qunit" ] );
+	grunt.registerTask( "test", [ "blanket_qunit" ] );
 	grunt.registerTask( "dev", [ "lint", "uglify" ] );
 	grunt.registerTask( "default", ["jshint", "qunit"]);
 };
