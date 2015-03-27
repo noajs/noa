@@ -4,7 +4,7 @@ Noa is a fast, small, thoughtfully written javascript MVC Framework. It's has 3 
 
 [![Build Status](https://img.shields.io/travis/noajs/noa/master.svg)](https://travis-ci.org/noajs/noa)
 [![Dependency Status](https://img.shields.io/gemnasium/noajs/noa.svg)](https://gemnasium.com/noajs/noa)
-
+[![Coverage Status](https://coveralls.io/repos/noajs/noa/badge.svg)](https://coveralls.io/r/noajs/noa)
 [![NPM version](https://img.shields.io/npm/v/noa.svg)](https://www.npmjs.org/package/noa)
 
   - To be everything you need.
