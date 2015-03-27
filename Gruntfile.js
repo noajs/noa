@@ -38,11 +38,9 @@ module.exports = function( grunt ) {
 
 		coveralls: {
 			options: {
-				force: true
+				force: false,
+				src: "http://localhost:<%= connect.server.options.port %>/coverage-results/core.lcov"
 			},
-			all: {
-				src: 'http://localhost:<%= connect.server.options.port %>/.coverage-results/core.lcov',
-			}
 		},
 
         connect: {
@@ -117,6 +115,7 @@ module.exports = function( grunt ) {
 	grunt.registerTask( "lint", [ "jshint", "jscs" ] );
 	grunt.registerTask( "test", [ "connect","qunit" ] );
 	grunt.registerTask( "dev", [ "lint", "uglify" ] );
+	grunt.registerTask( "cover", [ "connect", "coveralls" ] );
 	grunt.registerTask( "default", ["jshint", "qunit"]);
 
 	grunt.event.on('qunit.report', function(data) {
