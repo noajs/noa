@@ -11,8 +11,21 @@
   <script src="../lib/jquery-1.9.1.js"></script>
   <script src="../lib/jquery.mockjax.js"></script>
   <script src="../lib/qunit-1.17.1.js"></script>
-  <script type="text/javascript" src="../lib/blanket.min.js"
-        data-cover-reporter="../lib/grunt-reporter.js"></script>
+  <!-- <script type="text/javascript" src="../lib/blanket.min.js"
+        data-cover-reporter="../lib/grunt-reporter.js"></script> -->
+  <script  src="../lib/blanket.min.js"></script>
+  <script type="text/javascript">
+    // LCOV reporter, only if called with "lcovReport" parameter
+  if (location.href.match(/(\?|&)lcovReport($|&|=)/)) {
+     blanket.options("reporter", "../lib/lcov_reporter.js");
+     blanket.options("reporter_options", { toHTML:false });
+
+     // send results to PhantomJS
+     QUnit.done(function() {
+        alert(JSON.stringify(['qunit.report', window._$blanket_LCOV]));
+     });
+  }
+  </script>
 
 
   <script src="../src/noa.js" data-cover></script>

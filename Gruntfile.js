@@ -27,8 +27,32 @@ module.exports = function( grunt ) {
 		},
 
 		qunit: {
-            files: ["tests/index.html"]
+			all: {
+				options: {
+					urls: [
+						"http://localhost:<%= connect.server.options.port %>/tests/index.html?coverage=true&lcovReport"
+					]
+				}
+			}
         },
+
+		coveralls: {
+			options: {
+				force: true
+			},
+			all: {
+				src: '.coverage-results/core.lcov',
+			}
+		},
+
+        connect: {
+			server: {
+				options: {
+					port: 8085,
+					base:"."
+				}
+			}
+		},
 
 		jshint: {
 			all: {
@@ -83,13 +107,23 @@ module.exports = function( grunt ) {
 	} );
 
 	// Load grunt tasks from NPM packages
+	grunt.loadNpmTasks('grunt-contrib-connect');
 	grunt.loadNpmTasks("grunt-contrib-jshint");
 	grunt.loadNpmTasks("grunt-contrib-watch");
 	grunt.loadNpmTasks("grunt-contrib-uglify");
 	grunt.loadNpmTasks("grunt-contrib-qunit");
 	grunt.loadNpmTasks('grunt-blanket-qunit');
+	grunt.loadNpmTasks('grunt-coveralls');
 	grunt.registerTask( "lint", [ "jshint", "jscs" ] );
-	grunt.registerTask( "test", [ "blanket_qunit" ] );
+	grunt.registerTask( "test", [ "connect","qunit" ] );
 	grunt.registerTask( "dev", [ "lint", "uglify" ] );
 	grunt.registerTask( "default", ["jshint", "qunit"]);
+
+	grunt.event.on('qunit.report', function(data) {
+		grunt.file.write('.coverage-results/core.lcov', data);
+	});
+
+	grunt.event.on('qunit.done', function(){
+		grunt.log.ok("DONE")
+	})
 };
