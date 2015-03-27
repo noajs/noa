@@ -41,7 +41,7 @@ module.exports = function( grunt ) {
 				force: true
 			},
 			all: {
-				src: '.coverage-results/core.lcov',
+				src: 'http://localhost:<%= connect.server.options.port %>/.coverage-results/core.lcov',
 			}
 		},
 
@@ -120,7 +120,7 @@ module.exports = function( grunt ) {
 	grunt.registerTask( "default", ["jshint", "qunit"]);
 
 	grunt.event.on('qunit.report', function(data) {
-		grunt.file.write('.coverage-results/core.lcov', data);
+		grunt.file.write('coverage-results/core.lcov', data);
 	});
 
 	grunt.event.on('qunit.done', function(){
