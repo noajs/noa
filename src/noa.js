@@ -33,7 +33,7 @@
         "Mediator.ADDED" : "Mediator.ADDED"
     };
 
-    N._App = null;
+    N._App = undefined;
 
     N.registerApp = function( App ) {
         N._App = App;
