@@ -37,6 +37,7 @@
 
     N.registerApp = function( App ) {
         N._App = App;
+        return N._App;
     };
 
     N.getApp = function() {
