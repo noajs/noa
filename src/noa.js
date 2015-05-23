@@ -511,6 +511,7 @@
     N.App = makeClass();
     N.App.prototype.init = function() {
         this.events = N.Events();
+        this.emitter = N.Emitter();
         this.views = {};
         this.mediators = {};
         this.config = {
@@ -606,8 +607,8 @@
         }
         return el;
     };
-
-    N.Emitter = function(obj) {
+    N.Emitter = makeClass();
+    N.Emitter.prototype.init = function(obj) {
         if (obj){
             for (var key in Emitter.prototype) {
                 obj[key] = Emitter.prototype[key];
@@ -878,7 +879,6 @@
                         query = $(target);
                     } else {
                         query = this.view.el.querySelectorAll( target );
-                        console.log(query)
                     }
 
                     if ( query ) {
