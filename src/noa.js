@@ -40,12 +40,7 @@
     };
 
     N.getApp = function() {
-        if ( N._App ) {
-            return N._App;
-        } else {
-            throw N._makeError( "register", "Register your App with " +
-                "N.registerApp( YourApp )", null );
-        }
+        return N._App;
     };
 
     N.isJQueryAvailable = function() {
