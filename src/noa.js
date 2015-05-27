@@ -754,13 +754,7 @@
         N.Blueprint.prototype.init.call( this );
         if ( typeof properties !== "undefined" ) {
             for ( var s in properties ) {
-                if ( s === "template" ) {
-                    this.template = properties[s];
-                } else if ( s === "bind" ) {
-                    this.bindables = properties[s];
-                } else if ( s === "el" ) {
-                    this.el = properties[s];
-                }
+                this[s] = properties[s]
             }
         }
     };
