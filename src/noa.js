@@ -845,13 +845,19 @@
                     this._events = properties[s];
                 } else if ( s === "listeners" ) {
                     this._listeners = properties[s];
+                } else if ( s === "init" ) {
+                    this._init = properties[s];
                 }
             }
             if ( !N.isEmpty( this._events ) && !N.isEmpty( this._listeners ) ) {
                 this.events.call( this );
             }
 
-            if( !N.isEmpty( this._listeners ) ) {}
+            if( !N.isEmpty( this._listeners ) ) {};
+
+            if( typeof this._init !== "undefined" ) {
+                this._init.call( this );
+            }
         }
     };
 
