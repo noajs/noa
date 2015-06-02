@@ -135,7 +135,7 @@
                 }
                 N.ajax(url,dataType,"GET",data,callback);
             },
-            post: function(callback){
+            post: function(data, callback){
                 if(typeof callback === "undefined"){
                     // therefore no data supplied
                     callback = data;
