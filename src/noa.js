@@ -920,7 +920,7 @@
                                             this._listeners[this._events[s]].call( this, e );
                                             found = false;
                                         } else {
-                                            if(target.parentNode != this.view.el){
+                                            if(target.parentNode != this.view.el && target != this.view.el && target.parentNode !== null){
                                                 tryTarget(target.parentNode);
                                             }
                                         }
