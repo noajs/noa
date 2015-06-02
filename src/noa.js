@@ -65,9 +65,7 @@
         var request = new XMLHttpRequest(),
             response;
         request.open( method, url, true );
-        
         params = N.serialize(params)
-        console.log(url,dataType,method,params,callback)
 
         request.onload = function() {
             if(typeof dataType === "undefined") {
