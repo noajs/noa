@@ -61,53 +61,87 @@
         
     };
 
+    N.ajax = function( url,dataType,method,params,callback ) {
+        var request = new XMLHttpRequest(),
+            response;
+        request.open( "GET", url, true );
+        
+        params = N.serialize(params)
+        console.log(url,dataType,method,params,callback)
+
+        request.onload = function() {
+            if(typeof dataType === "undefined") {
+                dataType = N.types.TEXT;
+            }
+            if ( request.status >= 200 && request.status < 400 ) {
+                // Success!
+                if( dataType === N.types.JSON ) {
+                    response = JSON.parse(request.responseText);
+                } else if ( dataType === N.types.TEXT ) {
+                    response = request.responseText;
+                }
+                callback( {
+                    status: N.types.OK,
+                    statuz: N.types.HAPPY,
+                    statusCode: request.status,
+                    data: response
+                } );
+            } else {
+                if( dataType === N.types.JSON ) {
+                    response = JSON.parse({ error: request.responseText });
+                } else if ( dataType === N.types.TEXT ) {
+                    response = request.responseText;
+                }
+                callback( {
+                    status: N.types.NO_GOOD,
+                    statuz: N.types.SAD,
+                    statusCode: request.status,
+                    data: response
+                } );
+            }
+        };
+        request.onerror = function() {
+            callback( {
+                status: N.types.NO_GOOD,
+                statuz: N.types.SAD,
+                statusCode: request.status,
+                data: request.responseText
+            } );
+        };
+        request.send();
+    }
+
+    N.serialize = function(obj, prefix) {
+        var str = [];
+        for(var p in obj) {
+            if (obj.hasOwnProperty(p)) {
+                var k = prefix ? prefix + "[" + p + "]" : p, v = obj[p];
+                str.push(typeof v == "object" ?
+                serialize(v, k) :
+                encodeURIComponent(k) + "=" + encodeURIComponent(v));
+            }
+        }
+        return str.join("&");
+    }
+
     N.url = function( url,dataType ) {
         return {
             type: N.types.URL,
-            get: function( callback ) {
-                var request = new XMLHttpRequest(),
-                    response;
-                request.open( "GET", url, true );
-                request.onload = function() {
-                    if(typeof dataType === "undefined") {
-                        dataType = N.types.TEXT;
-                    }
-                    if ( request.status >= 200 && request.status < 400 ) {
-                        // Success!
-                        if( dataType === N.types.JSON ) {
-                            response = JSON.parse(request.responseText);
-                        } else if ( dataType === N.types.TEXT ) {
-                            response = request.responseText;
-                        }
-                        callback( {
-                            status: N.types.OK,
-                            statuz: N.types.HAPPY,
-                            statusCode: request.status,
-                            data: response
-                        } );
-                    } else {
-                        if( dataType === N.types.JSON ) {
-                            response = JSON.parse({ error: request.responseText });
-                        } else if ( dataType === N.types.TEXT ) {
-                            response = request.responseText;
-                        }
-                        callback( {
-                            status: N.types.NO_GOOD,
-                            statuz: N.types.SAD,
-                            statusCode: request.status,
-                            data: response
-                        } );
-                    }
-                };
-                request.onerror = function() {
-                    callback( {
-                        status: N.types.NO_GOOD,
-                        statuz: N.types.SAD,
-                        statusCode: request.status,
-                        data: request.responseText
-                    } );
-                };
-                request.send();
+            get: function(data,callback){
+                if(typeof callback === "undefined"){
+                    // therefore no data supplied
+                    callback = data;
+                    data = {};
+                }
+                N.ajax(url,dataType,"GET",data,callback);
+            },
+            post: function(callback){
+                if(typeof callback === "undefined"){
+                    // therefore no data supplied
+                    callback = data;
+                    data = {};
+                }
+                N.ajax(url,dataType,"POST",data,callback);
             }
         };
     };
@@ -176,7 +210,7 @@
                 appTemplatesPath += templateNameSplit[0] + "/";
             }
 
-            N.url(appTemplatesPath).get(function(response){
+            N.url(appTemplatesPath,N.types.TEXT).get(function(response){
                 callback(N.compile(response.data, templateNameSplit[1], data));
             });
         } else if( typeOfTemplate === N.types.HTML ) {
