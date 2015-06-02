@@ -907,7 +907,6 @@
                             this.view.el.addEventListener( missingEvent.action, function( e ) {
                                 // hop recursively to try and find the parent node that matches the element in question.
                                 var tryTarget = function(target){
-                                    console.log("tar",target,missingEvent.target)
                                     var existsYet = this.view.el.querySelectorAll( missingEvent.target );
                                     if( existsYet.length ){
                                         j = 0;
@@ -918,15 +917,11 @@
                                             }
                                         };
                                         if(found){
-                                            console.log("FOUND")
                                             this._listeners[this._events[s]].call( this, e );
                                             found = false;
                                         } else {
                                             if(target.parentNode != this.view.el){
-                                                console.log("hopping up again to",target.parentNode);
                                                 tryTarget(target.parentNode);
-                                            } else {
-                                                console.log("not found");
                                             }
                                         }
                                     }
