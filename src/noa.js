@@ -866,8 +866,13 @@
             action,
             target,
             query,
+            missingEvent,
             missingEvents = [],
+            i = 0,
+            j = 0,
+            found=false,
             s = "";
+
         if ( typeof this._events !== "undefined" ) {
             missingEvents = [];
             for ( s in this._events ) {
@@ -881,18 +886,55 @@
                         query = this.view.el.querySelectorAll( target );
                     }
 
-                    if ( query ) {
+                    if ( query.length ) {
                         if(N.isJQueryAvailable()){
                             query.on(action, this._listeners[this._events[s]]);
                         } else {
-                            for (var i = 0; i < query.length; i++) {
+                            i = 0;
+                            for (i = 0; i < query.length; i++) {
                                 query[i].addEventListener( action, this._listeners[this._events[s]] );
                             }
                         }
                     } else {
-                        missingEvents.push( { action: query } );
+                        missingEvents.push( { action: action, target: target } );
                     }
-                    // 
+                    if( missingEvents.length ) {
+                        i = 0;
+                        // Hop up the parent node list to find a match. 
+                        // since that event couldn't be added yet we will try and see if it matches when the event actually happens. 
+                        for ( i = 0; i < missingEvents.length; i++ ) {
+                            missingEvent = missingEvents[i];
+                            this.view.el.addEventListener( missingEvent.action, function( e ) {
+                                // hop recursively to try and find the parent node that matches the element in question.
+                                var tryTarget = function(target){
+                                    console.log("tar",target,missingEvent.target)
+                                    var existsYet = this.view.el.querySelectorAll( missingEvent.target );
+                                    if( existsYet.length ){
+                                        j = 0;
+                                        for ( var j = 0; j < existsYet.length; j++ ) {
+                                            if(target == existsYet[j]){
+                                                found = true;
+                                                break;
+                                            }
+                                        };
+                                        if(found){
+                                            console.log("FOUND")
+                                            this._listeners[this._events[s]].call( this, e );
+                                            found = false;
+                                        } else {
+                                            if(target.parentNode != this.view.el){
+                                                console.log("hopping up again to",target.parentNode);
+                                                tryTarget(target.parentNode);
+                                            } else {
+                                                console.log("not found");
+                                            }
+                                        }
+                                    }
+                                }.bind(this)
+                                tryTarget(e.target)
+                            }.bind(this) )
+                        };
+                    }
                 }
             }
         }
