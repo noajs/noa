@@ -930,40 +930,47 @@
                     } else {
                         missingEvents.push( { action: action, target: target } );
                     }
-                    if( missingEvents.length ) {
-                        i = 0;
-                        // Hop up the parent node list to find a match. 
-                        // since that event couldn't be added yet we will try and see if it matches when the event actually happens. 
-                        for ( i = 0; i < missingEvents.length; i++ ) {
-                            missingEvent = missingEvents[i];
-                            this.view.el.addEventListener( missingEvent.action, function( e ) {
-                                // hop recursively to try and find the parent node that matches the element in question.
-                                var tryTarget = function(target){
-                                    var existsYet = this.view.el.querySelectorAll( missingEvent.target );
-                                    if( existsYet.length ){
-                                        j = 0;
-                                        for ( var j = 0; j < existsYet.length; j++ ) {
-                                            if(target == existsYet[j]){
-                                                found = true;
-                                                break;
-                                            }
-                                        };
-                                        if(found){
-                                            this._listeners[this._events[s]].call( this, e );
-                                            found = false;
-                                        } else {
-                                            if(target.parentNode != this.view.el && target != this.view.el && target.parentNode !== null){
-                                                tryTarget(target.parentNode);
-                                            }
-                                        }
-                                    }
-                                }.bind(this)
-                                tryTarget(e.target)
-                            }.bind(this) )
-                        };
-                    }
                 }
+            } // end of for loop for events
+
+            if( missingEvents.length ) {
+                i = 0;
+                // Hop up the parent node list to find a match. 
+                // since that event couldn't be added yet we will try and see if it matches when the event actually happens. 
+                for ( i = 0; i < missingEvents.length; i++ ) {
+                    missingEvent = missingEvents[i];
+                    console.log(missingEvent,this.view);
+                    (function(missingEvent){
+                        this.view.el.addEventListener( missingEvent.action, function( e ) {
+                            console.log(missingEvent.target)
+                            var existsYet = this.view.el.querySelectorAll( missingEvent.target );
+                            if( !existsYet.length ){
+                                return;
+                            }
+                            // hop recursively to try and find the parent node that matches the element in question.
+                            var tryTarget = function(target){
+                                j = 0;
+                                for ( var j = 0; j < existsYet.length; j++ ) {
+                                    if(target == existsYet[j]){
+                                        found = true;
+                                        break;
+                                    }
+                                };
+                                if(found){
+                                    this._listeners[this._events[s]].call( this, e );
+                                    found = false;
+                                } else {
+                                    if(target.parentNode != this.view.el && target != this.view.el && target.parentNode !== null){
+                                        tryTarget(target.parentNode);
+                                    }
+                                }
+                            }.bind(this)
+                            tryTarget(e.target)
+                        }.bind(this) )
+                    }.bind(this) )( missingEvent )
+                };
             }
+
         }
     };
 
