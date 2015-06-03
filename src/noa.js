@@ -1,3 +1,18 @@
+// ┌────────────────────────────────────────────────────────────────────┐ \\
+// │ Raphaël 2.1.4 - JavaScript Vector Library                          │ \\
+// ├────────────────────────────────────────────────────────────────────┤ \\
+// │ Copyright © 2008-2012 Dmitry Baranovskiy (http://raphaeljs.com)    │ \\
+// │ Copyright © 2008-2012 Sencha Labs (http://sencha.com)              │ \\
+// ├────────────────────────────────────────────────────────────────────┤ \\
+// │ Licensed under the MIT (http://raphaeljs.com/license.html) license.│ \\
+// └────────────────────────────────────────────────────────────────────┘ \\
+
+// /*
+//  * Licensed under the MIT license:
+//  * http://www.opensource.org/licenses/mit-license.php
+//  *
+//  */
+
 /*jslint browser:true */
 ( function( root, factory ) {
     if ( typeof define === "function" && define.amd ) {
