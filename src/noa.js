@@ -891,11 +891,11 @@
         }
         N.template(this.template, data, type, function(rendered){
             renderedHTML = rendered;
+            this.el.innerHTML = renderedHTML;
             N._App.emitter.emit("View.TEMPLATE_PARSED",{
                 data: renderedHTML,
                 view : this
             });
-            this.el.innerHTML = renderedHTML;
             
             // bind the events on this element to this mediator
             N.bindTemplate(this.mediator, this.el);
