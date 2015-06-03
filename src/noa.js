@@ -117,8 +117,9 @@
                 if(typeof child.tagName !== "undefined"){
                     if(child.tagName == "INPUT" || 
                        child.tagName == "TEXTAREA"){
-                        tags.push({name:child.name,
-                                   value:child.value});
+                        var o = {};
+                        o[child.name] = child.value;
+                        tags.push(o);
                     } else {
                         getChildren(child);
                     }
