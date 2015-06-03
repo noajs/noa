@@ -65,8 +65,14 @@
         var request = new XMLHttpRequest(),
             response;
         request.open( method, url, true );
-        params = N.serialize(params)
-
+        if(dataType == N.types.JSON){
+            request.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+            if(N.isObjectLiteral(params)){
+                params = JSON.stringify(params)
+            } else if(N.isString(params)){}
+        } else {
+            params = N.serialize(params)    
+        }
         request.onload = function() {
             if(typeof dataType === "undefined") {
                 dataType = N.types.TEXT;
@@ -106,20 +112,36 @@
                 data: request.responseText
             } );
         };
-        request.send();
+        if(typeof params !== "undefined"){
+            console.log("sending params",params)
+            request.send(params);
+        } else {
+            request.send();    
+        }
+        
     }
 
-    N.serializeForm = function(form){
-        var tags = [];
+    N.serializeForm = function(form,useObj){
+        var tags = [],
+            isArray = true;
+        if(typeof useObj !== "undefined"){
+            tags = {};
+            isArray = false;
+        }
         function getChildren(element){
             for(var i = 0; i < element.children.length; i++){
                 var child = element.children[i];
                 if(typeof child.tagName !== "undefined"){
                     if(child.tagName == "INPUT" || 
                        child.tagName == "TEXTAREA"){
-                        var o = {};
-                        o[child.name] = child.value;
-                        tags.push(o);
+                        if(isArray){
+                            var o = {};
+                            o[child.name] = child.value;
+                            tags.push(o);    
+                        } else {
+                            tags[child.name] = child.value;
+                        }
+                        
                     } else {
                         getChildren(child);
                     }
@@ -961,10 +983,8 @@
                 // since that event couldn't be added yet we will try and see if it matches when the event actually happens. 
                 for ( i = 0; i < missingEvents.length; i++ ) {
                     missingEvent = missingEvents[i];
-                    console.log(missingEvent,this.view);
                     (function(missingEvent){
                         this.view.el.addEventListener( missingEvent.action, function( e ) {
-                            console.log(missingEvent.target)
                             var existsYet = this.view.el.querySelectorAll( missingEvent.target );
                             if( !existsYet.length ){
                                 return;
