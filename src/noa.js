@@ -971,7 +971,7 @@
                             }
                         }
                     } else {
-                        missingEvents.push( { action: action, target: target } );
+                        missingEvents.push( { action: action, target: target,listener:this._listeners[this._events[s]] } );
                     }
                 }
             } // end of for loop for events
@@ -998,7 +998,8 @@
                                     }
                                 };
                                 if(found){
-                                    this._listeners[this._events[s]].call( this, e );
+                                    missingEvent.listener.call(this,e)
+                                    // this._listeners[this._events[s]].call( this, e );
                                     found = false;
                                 } else {
                                     if(target.parentNode != this.view.el && target != this.view.el && target.parentNode !== null){
