@@ -113,7 +113,6 @@
             } );
         };
         if(typeof params !== "undefined"){
-            console.log("sending params",params)
             request.send(params);
         } else {
             request.send();    
