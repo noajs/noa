@@ -318,7 +318,6 @@
             skipBracket = false,
             filterAddon,
             thisObj;
-
         while ((result = matchers.componentStart.exec(componentSource)) !== null) {
             if(result[1] === templateName){
                 var inside;
@@ -328,6 +327,9 @@
                 }
                 break;
             }
+        }
+        if(typeof obj === "undefined"){
+            return toParse;
         }
         var bracketVals = toParse.match(matchers.brackets);
         if(!bracketVals){
@@ -889,10 +891,10 @@
         }
         N.template(this.template, data, type, function(rendered){
             renderedHTML = rendered;
-            N._App.events.trigger(this.el, "View.TEMPLATE_PARSED",{
-                data: renderedHTML
+            N._App.emitter.emit("View.TEMPLATE_PARSED",{
+                data: renderedHTML,
+                view : this
             });
-            
             this.el.innerHTML = renderedHTML;
             
             // bind the events on this element to this mediator
