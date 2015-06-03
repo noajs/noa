@@ -109,6 +109,27 @@
         request.send();
     }
 
+    N.serializeForm = function(form){
+        var tags = [];
+        function getChildren(element){
+            for(var i = 0; i < element.children.length; i++){
+                var child = element.children[i];
+                if(typeof child.tagName !== "undefined"){
+                    if(child.tagName == "INPUT" || 
+                       child.tagName == "TEXTAREA"){
+                        tags.push({name:child.name,
+                                   value:child.value});
+                    } else {
+                        getChildren(child);
+                    }
+                }
+            }
+        }
+        var element = form;
+        getChildren(element);
+        return JSON.stringify(tags);
+    }
+
     N.serialize = function(obj, prefix) {
         var str = [];
         for(var p in obj) {
