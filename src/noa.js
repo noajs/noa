@@ -328,7 +328,7 @@
                 break;
             }
         }
-        if(typeof obj === "undefined"){
+        if(typeof obj === "undefined" || !obj){
             return toParse;
         }
         var bracketVals = toParse.match(matchers.brackets);
