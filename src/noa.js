@@ -254,10 +254,17 @@
         N.Filter[name] = filter;
     };
 
+    N.templates = {};
+
     N.template = function( template, data, typeOfTemplate, callback ) {
         var templateNameSplit = template.split("#"),
             appTemplatesPath = N.getApp().config.templates;
         if ( typeof typeOfTemplate === "undefined" || typeOfTemplate === N.types.URL ) {
+            // If it is cached
+            if(typeof N.templates[template] !== "undefined"){
+                callback(N.compile(N.templates[template], templateNameSplit[1], data));
+                return;   
+            }
             // if they use trailing slashes then use trailing slashes.
             if(appTemplatesPath[appTemplatesPath.length-1] !== "/"){
                 appTemplatesPath += "/" + templateNameSplit[0];
@@ -266,10 +273,12 @@
             }
 
             N.url(appTemplatesPath,N.types.TEXT).get(function(response){
+                N.templates[template] = response.data;
                 callback(N.compile(response.data, templateNameSplit[1], data));
             });
         } else if( typeOfTemplate === N.types.HTML ) {
-            callback(N.compile(this.template, templateNameSplit[1], data));
+            N.templates[template] = response.data;
+            callback(N.compile(template, templateNameSplit[1], data));
         }
     };
 
